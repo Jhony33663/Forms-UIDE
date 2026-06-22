@@ -16,5 +16,3 @@ Cada archivo `.html` inicia con un comentario que indica la **URL absoluta** de 
 ## Regla de campaña aplicada
 
 Los formularios con el script nuevo (`updateUtmTracking` + `ORIGINS`) **siempre** envían una campaña: si no hay UTM reconocido se asigna la orgánica `881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026` por defecto; con UTM se sobreescribe a la campaña correspondiente (Meta / Google / Search / Otros medios). Los formularios con el script anterior (`setCampaignFromOrigen`) ya cumplían esta regla mediante su fallback `TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026`.
-
-> Origen de los datos: `wp_postmeta._elementor_data` (base `bitn_uide`). Las URLs se construyen con `permalink_structure = /%postname%/`.
