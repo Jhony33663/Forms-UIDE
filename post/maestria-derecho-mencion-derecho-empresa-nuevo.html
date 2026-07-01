@@ -1,13 +1,3 @@
-<!--
-  UIDE - Formulario embebido (NUEVO — sin post en BD aún)
-  Pagina: Maestría en Derecho con mención en Derecho de Empresa - Orgánico
-  URL: https://www.uide.edu.ec/maestria-derecho-mencion-derecho-empresa/
-  post_id: N/D | post_type: post | status: nuevo | slug: maestria-derecho-mencion-derecho-empresa
-  Origen: archivo local /home/toor/ (no en wp_postmeta aún)
-  Exportado: 2026-06-22
-  Fix aplicado: campaña default + guard __utmTracked
--->
-
 ﻿<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
 <style>
     .uide-frm-wrapper * {
@@ -542,7 +532,9 @@
             if (ldF) ldF.value = conf[1];
             if (cmpF) cmpF.value = conf[2];
         } else {
-            var oriKey = ((oriF && oriF.value) || 'Google Natural Search').toLowerCase().trim();
+            var ref = (document.referrer || '').toLowerCase();
+            var isSearch = ref.indexOf('google.') !== -1 || ref.indexOf('bing.') !== -1 || ref.indexOf('search.yahoo') !== -1 || ref.indexOf('duckduckgo') !== -1;
+            var oriKey = isSearch ? 'google natural search' : 'formulario web';
             var def = ORIGINS[oriKey] || ORIGINS['google natural search'];
             if (oriF) oriF.value = def[0];
             if (ldF) ldF.value = def[1];

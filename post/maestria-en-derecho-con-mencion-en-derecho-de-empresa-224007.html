@@ -4,8 +4,8 @@
   URL: https://www.uide.edu.ec/maestria-en-derecho-con-mencion-en-derecho-de-empresa/
   post_id: 224007 | post_type: post | status: publish | slug: maestria-en-derecho-con-mencion-en-derecho-de-empresa
   Origen: wp_postmeta._elementor_data (bitn_uide)
-  Exportado: 2026-06-22
-  Fixes: campaña default + guard __utmTracked
+  Exportado: 2026-07-01
+  Fixes: campaña default + guard __utmTracked + directo=Formulario Web
 -->
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
@@ -542,7 +542,9 @@
             if (ldF) ldF.value = conf[1];
             if (cmpF) cmpF.value = conf[2];
         } else {
-            var oriKey = ((oriF && oriF.value) || 'Google Natural Search').toLowerCase().trim();
+            var ref = (document.referrer || '').toLowerCase();
+            var isSearch = ref.indexOf('google.') !== -1 || ref.indexOf('bing.') !== -1 || ref.indexOf('search.yahoo') !== -1 || ref.indexOf('duckduckgo') !== -1;
+            var oriKey = isSearch ? 'google natural search' : 'formulario web';
             var def = ORIGINS[oriKey] || ORIGINS['google natural search'];
             if (oriF) oriF.value = def[0];
             if (ldF) ldF.value = def[1];
