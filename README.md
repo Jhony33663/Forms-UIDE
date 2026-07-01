@@ -4,12 +4,12 @@ Exportación de **todos los formularios embebidos** del sitio UIDE (HTML dentro 
 
 Cada archivo `.html` inicia con un comentario que indica la **URL absoluta** de la página donde está el formulario, más `post_id`, `post_type`, `status` y `slug`.
 
-## Categorías (139 formularios)
+## Categorías (141 formularios)
 
 | Carpeta | Descripción | Cantidad |
 |---|---|---|
 | `page/` | Páginas (home, programas, pregrados presenciales) | 11 |
-| `post/` | Carreras y maestrías | 117 |
+| `post/` | Carreras y maestrías | 119 |
 | `e-landing-page/` | Landing pages de Elementor (Registro General) | 3 |
 | `elementor_library/` | Plantillas reutilizables (CTA-home, blogs) — embebidas en otras páginas, sin URL propia | 8 |
 
