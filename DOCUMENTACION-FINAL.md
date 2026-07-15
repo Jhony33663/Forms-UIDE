@@ -1,195 +1,127 @@
-# CAMBIO MASIVO DE PERÍODOS Y CAMPAÑAS — Documentación Final
+# CAMBIO MASIVO DE PERÍODOS E IDs — Documentación Final
 
-## 1. Trabajo Realizado
+## 1. Cambios Aplicados
 
-### 1.1 Cambio de Períodos — APLICADO ✅
+### 1.1 IDs de programa (option values + JS)
 
-Los períodos se actualizaron para **153 formularios** directamente en `wp_postmeta._elementor_data` vía SQL REPLACE.
+| Campo | Antes | Después | Contexto |
+|---|---|---|---|
+| Marketing | `value="2"` | `value="557"` | `<option>` en selects de Quito |
+| Marketing | `programId = "2"` | `programId = "557"` | JS en página específica |
+| Administración | `value="1"` | `value="558"` | `<option>` en selects de Quito |
+| Administración | `programId = "1"` | `programId = "558"` | JS en página específica |
 
-| Período anterior | Perínero nuevo | Cantidad |
+**URLs afectadas (34 publicadas):** formularios generales Quito, pregrado-quito-general-*, carreras-general-m-uide, home, programas-academicos-*, mas-informacion, financiamiento, blogs, landing pages.
+
+### 1.2 Períodos por defecto (hidden input + JS updatePeriodo)
+
+| Página | Período | Tipo |
 |---|---|---|
-| `2026-1 Online Posgrado` | `2026-2 Online Posgrado` | 48 |
-| `2026-1 Presencial Posgrado` | `2026-2 Presencial Posgrado` | 6* |
-| `2026-1 Online Posgrado` (NO en lista) | `2027-1 Online Posgrado` | 14 |
-| `2026-2A Online Pregrado` | `2026-2 Online Pregrado` | 23 |
-| `2026-2A Online PVC` | `2026-2 Online PVC` | 1 |
-| `2026-1 Q Pregrado` | `2026-2 Q Pregrado` | 1 |
-| `2026-1 L Pregrado` | `2026-2 L Pregrado` | 2 |
-| Landing/Home/Blog general `2026-1` | `2026-2 Q Pregrado` / `2026-2 Online Posgrado` según tp_pgm | ~20 |
-| **Total** | | **~115** |
+| `registro-general-pg` | `2026-2 Online Posgrado` | Posgrado |
+| `programas-academicos-posgrado-presencial` | `2026-2 Presencial Posgrado` | Posgrado |
+| `programas-academicos-posgrado-online` | `2026-2 Online Posgrado` | Posgrado |
+| `posgrados-en-linea-y-presenciales-2` | `2026-2 Online Posgrado` | Posgrado |
+| `programas-academicos-pregrado-quito` | `2026-2 Q Pregrado` | Pregrado |
+| `programas-academicos-pregrado-guayaquil` | `2026-2 Guayaquil` | Pregrado |
+| `programas-academicos-pregrado-loja` | `2026-2 L Pregrado` | Pregrado |
+| `programas-academicos-pregrado-online` | `2026-2 Online Pregrado` | Pregrado |
+| `proceso-de-admision-pregrado` | `2026-2 Q Pregrado` | Pregrado |
+| `home-version-thirteen` | `2026-2 Q Pregrado` | Pregrado |
+| `mas-informacion` | `2026-2 Q Pregrado` | Pregrado |
+| `mas-informacion-quito` | `2026-2 Q Pregrado` | Pregrado |
+| `programas-academicos` | `2026-2 Q Pregrado` | Pregrado |
 
-*Nota: Los 4 posgrados presenciales de la lista oficial (Gastronomía, Diseño Interiores, Bienestar Animal, Producción Animal) ya están en 2026-2.*
+### 1.3 Maestrías 2027-1
 
-**Rollback:** `/home/toor/backup_periodos_20260713_104247.sql` (40 MB)
-
----
-
-### 1.2 ORIGINS → Campaign (NO aplicado masivamente) ⚠️
-
-Se construyó un mapeo de **62 orígenes** al broker de 5 campañas. El código del objeto ORIGINS se documenta en `/home/toor/Forms-UIDE/CATEGORIZACION_ORIGEN_CAMPAIGN.md` pero **NO se aplicó masivamente** porque el campo `_elementor_data` contiene JSON escapado de MySQL que es propenso a corromperse cuando se manipula fuera de la API de WordPress.
-
-**El canary (post_id 135319, Maestría en Bienestar Animal)** se actualizó parcialmente pero tuvo errores de sintaxis en el JS.
-
----
-
-### 1.3 Cache
-
-- WP Rocket: borrada y regenerada
-- Elementor CSS: regenerada con `wp elementor flush-css --all`
-
----
-
-## 2. El Problema Campaña vs Origen
-
-### 2.1 Qué pasa ahora
-
-El registro de Pardot muestra **dos campos** distintos:
-- **Origen:** `Formulario Web` (correcto — es el valor del input `origen`)
-- **Nombre de la Campaña:** `LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026` (o el utm_campaign si no hay traducción)
-
-Pero cuando el usuario llega con `?utm_source=Google Ads&utm_campaign=search_2026_...`, el código antiguo **no encontraba** `google ads` en el objeto ORIGINS y caía al default.
-
-### 2.2 Causa raíz
-
-`ORIGINS` tiene **orígenes como keys** (ej: `facebook`, `google search`, `formulario web`). No tiene campañas UIDE. La lógica actual busca UTM primero como key; si no lo encuentra, compara por texto; si no, usa default.
-
-Pero `google ads` no existe como key. `Google Ads` en el UTM source se normaliza a `google ads` — y ese string no está en ORIGINS. El mismatch es:
-- UTM dice: `google ads`
-- ORIGINS tiene: `google search`, `google natural search`, `google pmax`, `google display`
-- El código antiguo no tiene un "reverse map" de campaña → origen
+| Programa | Período | Acción |
+|---|---|---|
+| Transformación Digital de Negocios | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Gestión Deportiva | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Desarrollo WEB | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Educación Básica | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Comunicación Política | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Dirección Publicitaria y Creativa | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Marketing y Comunicación | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Turismo | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Planificación y Diseño Urbano | `2027-1 Online Posgrado` | Ya estaba correcto |
+| Nutrición y Dietética | `2026-2 Online Posgrado` | Se queda en 2026-2 |
+| Emergencias Sanitarias | — | Pasado a draft (oculto) |
 
 ---
 
-## 3. Plan para Setear Campaña Según el Listado
+## 2. Técnica utilizada
 
-### 3.1 Regla de Negocio
+**PHP vía mysqli** (no SQL REPLACE, no sed, no MySQL CLI directo).
 
-| Origen (API Name en Pardot) | utm_campaign que debe llegar |
-|---|---|
-| Audience Network Ads | `TRAFICO_GENERAL_META_IT1_2026` |
-| Facebook / Instagram / Meta / Messenger ads | `TRAFICO_GENERAL_META_IT1_2026` |
-| Google Search / Bing Ads | `LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026` |
-| Google Display / DemandGen / Discovery / Pmax / YouTube / DV360 | `TRAFICO_GENERAL_GOOGLE_IT1_2026` |
-| Google Natural Search / Bing Natural Search / ChatGPT | `881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026` |
-| **TODOS LOS DEMÁS** (42 orígenes: TikTok, LinkedIn, Mailing, etc.) | `TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026` |
+### ¿Por qué PHP y no SQL?
 
-### 3.2 Estrategia Recomendada (REPLACE en BD)
+El `_elementor_data` es JSON escapado. Dentro del JSON, el HTML tiene backslash-escapes (`\"`, `\r\n`, `\u00f3`). Al usar SQL `REPLACE()` directamente, los niveles de escape se pierden:
+- `\\"` en literal SQL → `\"` en string (correcto)
+- `\"` en literal SQL → `"` (INCORRECTO, el backslash se ignora)
 
-Dado que manipular el JSON vía Python/regex es inestable, la forma más segura es:
+PHP no tiene este problema porque `str_replace('value=\"1\">', 'value=\"558\">', $meta)` trabaja con los bytes exactos tal cual vienen de la BD.
 
-**Opción A: Actualizar el objeto ORIGINS vía SQL** (reemplaza el ~35 actual por 62)
-```sql
--- Esto SOLO cambia el string ORIGINS, no toca la función updateUtmTracking
-UPDATE wp_postmeta 
-SET meta_value = REPLACE(
-  meta_value, 
-  '<string_ORIGINS_actual>',  --hay que extraerlo primero
-  '<string_ORIGINS_completo_con_62_entradas>'
-)
-WHERE meta_key='_elementor_data' AND post_id IN (<ids>);
+**Sin embargo**, los caracteres acentuados en `_elementor_data` se almacenan como secuencias `\uXXXX` (ej: `\u00f3`, `\u00ed`). En PHP, `str_replace` con strings UTF-8 (ej: `ó`) NO encontrará coincidencias. Hay que usar las secuencias de escape exactas: `str_replace('Educaci\u00f3n', ...)`.
+
+### Flujo
+
+1. **Backup** con `mysqldump` de las filas afectadas
+2. **PHP** lee `meta_value`, aplica `str_replace`, escribe con `real_escape_string`
+3. **Validación** JSON con `JSON_VALID()` después de cada UPDATE
+4. **Verificación** con `curl` + `grep` en el HTML servido
+5. **Cache** WP Rocket purgado + Elementor CSS regenerado vía WP-CLI
+
+---
+
+## 3. Lecciones aprendidas
+
+1. **La BD manda.** El repo es solo un export. Editar los `.html` no cambia nada en el sitio.
+2. **El cache miente.** WP Rocket sirve HTML stale incluso después de actualizar la BD. Siempre purgar + verificar con curl.
+3. **Escapar es traicionero.** `\"` ≠ `\\"` en MySQL. Usar `LOCATE()` no `LIKE`. Preferir PHP sobre SQL para manipular JSON escapado.
+4. **No todo es el `<input>`.** El JS `updatePeriodo()` tiene fallbacks que también necesitan actualizarse.
+5. **El período suelto (`value="2026-1">`) necesita contexto.** No reemplazar por un valor genérico; cada página tiene su propio período destino.
+6. **Los acentos son `\uXXXX` en la BD.** `str_replace('Educación', ...)` no funciona; usar `str_replace('Educaci\u00f3n', ...)`.
+7. **No cambiar el DOM en handlers de submit.** El usuario ve el cambio. Usar solo `handleConditionalRedirect` para cambios silenciosos.
+8. **Normalizar valores entre ShowValuesSede y handleConditionalRedirect.** Si ya coinciden, no forzar de nuevo.
+9. **Scripts solapados corrompen.** Verificar el estado del DB antes de aplicar otro script sobre la misma zona.
+
+---
+
+## 4. Cambios en forms generales (2026-07-14)
+
+### 4.1 Educación Básica (ID 546)
+
+Agregada al `<select name="posgrado_online">` de 21 formularios generales. Inserción después de ID 544 (Educación Tecnología e Innovación) usando `str_replace` con secuencias `\uXXXX`.
+
+```
+<option value="546">Maestría en Educación Básica - O</option>
 ```
 
-Pero `<string_ORIGINS_actual>` varía entre posteos, por lo que esto no es viable sin extraer cada JSON.
+### 4.2 PROGS_2027_1
 
-**Opción B (RECOMENDADA): Agregar un script antes de `</body>` en el theme**
-
-Crear un snippet de JavaScript que:
-1. Lea el valor del campo oculto `origen`
-2. Busque ese origen en un diccionario JS que mapee origen → campaña
-3. Asigne `cmpF.value` directamente
-
-**Ventaja:** No se modifica la BD. El script se sirve en cada página y siempre usa el mapeo correcto.
-
+Array de IDs de programas con intake 2027-1 en `updatePeriodo()`:
 ```javascript
-// En functions.php del theme o plugin de snippets
-add_action('wp_footer', function() {
-  ?>
-  <script>
-  (function() {
-    var ORIGIN_TO_CAMPAIGN = {
-      'Facebook': 'TRAFICO_GENERAL_META_IT1_2026',
-      'Facebook Ads': 'TRAFICO_GENERAL_META_IT1_2026',
-      'Instagram': 'TRAFICO_GENERAL_META_IT1_2026',
-      'Instagram Ads': 'TRAFICO_GENERAL_META_IT1_2026',
-      'Google': 'TRAFICO_GENERAL_GOOGLE_IT1_2026',
-      'Google Search': 'LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026',
-      'Google Natural Search': '881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026',
-      'Bing Natural Search': '881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026',
-      'Chatgpt': '881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026',
-      // Todos los demás:
-      'Tiktok': 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026',
-      'Linkedin': 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026',
-      'Mailing': 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026',
-      // ... etc
-    };
-    
-    // Sobrescribir updateUtmTracking para que SIEMPRE asigne la campaña correcta
-    window.updateUtmTracking = function() {
-      if (window.__utmTracked) return;
-      window.__utmTracked = true;
-      
-      var srcF = document.getElementById('utm_source'),
-          cmpF = document.getElementById('utm_campaign'),
-          oriF = document.getElementById('origen'),
-          ldF = document.getElementById('c_lead');
-      
-      // Leer origen (venga de donde venga)
-      var origenValue = (oriF && oriF.value) || 'Google Natural Search';
-      origenValue = origenValue.trim();
-      
-      // Buscar campaña para este origen
-      var campaign = ORIGIN_TO_CAMPAIGN[origenValue] || 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026';
-      
-      // Asignar al campo de Pardot
-      if (cmpF) cmpF.value = campaign;
-      if (ldF) ldF.value = 'Digital';
-    };
-  })();
-  </script>
-  <?php
-});
+var PROGS_2027_1 = ["510","515","265","278","546","554"];
+// Override al final de updatePeriodo:
+if (PROGS_2027_1.indexOf(car) !== -1 && tp.indexOf("Posgrado") !== -1) {
+    v = "2027-1 Online Posgrado";
+}
 ```
 
-### 3.3 Pasos para Implementar
+### 4.3 Distancia → Quito
 
-1. **Confirmar** que el theme `softek` tenga `wp_footer` hook
-2. **Crear** el snippet con el mapeo completo de 62 orígenes
-3. **Agregar** el código vía plugin (Code Snippet o similar)
-4. **Probar** con `?utm_source=Google+Ads` para confirmar que `cmpF.value` = `LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026`
-5. **Purgar cache** WP Rocket + Elementor CSS
+- **ShowValuesSede:** valor de opción posgrado para Distancia cambiado de `Posgrado Online` a `Posgrado En Línea` (consistente con Loja/Guayaquil).
+- **handleConditionalRedirect:** agregado `|| sf.value === "Distancia"` a la condición que fuerza sede="Quito" para posgrados (mismo patrón que Loja/Guayaquil, invisible al usuario).
 
-### 3.4 Resultado Esperado
+---
 
-| UTM Source | Origen resultante | Campaña resultante |
+## 4. Backups
+
+| Archivo | Fecha | Contenido |
 |---|---|---|
-| `google ads` (Google) | `Google Search` (o el origen configure via ORIGINS) | `LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026` |
-| `facebook` | `Facebook` | `TRAFICO_GENERAL_META_IT1_2026` |
-| Sin UTM | `Google Natural Search` | `881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026` |
-| `tiktok` | `Tiktok` | `TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026` |
+| `/home/toor/backup_cambio_ids_20260714_095416.sql` | 2026-07-14 | IDs programa (55 posts) |
+| `/home/toor/backup_formularios_general_20260714_102042.sql` | 2026-07-14 | Períodos generales (9 posts) |
 
 ---
 
-## 4. Archivos Generados
-
-| Archivo | Descripción |
-|---|---|
-| `/home/toor/Forms-UIDE/CATEGORIZACION_ORIGEN_CAMPAIGN.md` | Mapeo completo de 62 orígenes → 5 campañas |
-| `/home/toor/Forms-UIDE/CLUSTERS_ORIGEN_CAMPAIGN.md` | Visualización por clusters |
-| `/home/toor/Forms-UIDE/RAMIFICACION_ORIGENES.md` | Árbol de decisiones |
-| `/home/toor/Forms-UIDE/RESUMEN_PLAZOS.md` | Detalle de cambio de períodos |
-| `/home/toor/Forms-UIDE/PLAN_CAMBIO_PLAZOS.md` | Runbook de cambio de plazos |
-| `/home/toor/backup_periodos_20260713_104247.sql` | Backup completo |
-
----
-
-## 5. Pendientes
-
-- [ ] Elegir opción (script en theme vs SQL)
-- [ ] Desarrollar snippet definitivo con mapeo 62 orígenes
-- [ ] Probar en staging (192.168.23.7)
-- [ ] Masificar a producción si validan
-
----
-
-**Documentado:** 2026-07-13
-**Autor:** Hermes Agent
+**Documentado:** 2026-07-14

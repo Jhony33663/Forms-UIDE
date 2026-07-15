@@ -1,182 +1,223 @@
 # Cambio masivo de formularios UIDE — Runbook
 
-Procedimiento para aplicar reglas (ej. asignación de campaña) a **todos** los formularios embebidos del sitio de una sola vez, con respaldo, canary y rollback.
+Procedimiento para actualizar valores en formularios Elementor embebidos en WordPress, con respaldo, canary y rollback.
 
-> Los formularios son HTML embebido dentro de widgets de **Elementor**, guardados en `wp_postmeta.meta_value` con `meta_key = '_elementor_data'` (JSON escapado). NO están en `post_content`. Editar ese JSON por SQL es la vía masiva; el editor de Elementor solo sirve uno a uno.
-
----
-
-## 1. Inventario (139 formularios)
-
-| Categoría (`post_type`) | Qué es | Cant. |
-|---|---|---|
-| `post` | Carreras y maestrías | 117 |
-| `page` | Home, programas, pregrados presenciales | 11 |
-| `e-landing-page` | Landing pages de Elementor | 3 |
-| `elementor_library` | Plantillas reutilizables (CTA-home, blogs) | 8 |
-
-Dos variantes de script conviven:
-
-- **103 "script nuevo"** → función `updateUtmTracking()` + objeto `ORIGINS`.
-- **36 "script viejo"** → función `setCampaignFromOrigen()` (sin `ORIGINS`).
-
-Todo vive en el sitio principal (`wp_posts`). El blog multisitio (`wp_10_*`) no tiene formularios.
+> **Fuente de verdad:** `wp_postmeta._elementor_data` (JSON escapado). Los archivos `.html` del repo son solo export de referencia. Cambiar un formulario = cambiar la BD y re-exportar.
 
 ---
 
-## 2. La regla de campaña
+## 0. Nomenclatura y leyes
 
-`utm_campaign` (→ campo Pardot **Nombre de la Campaña**) **nunca** debe quedar vacío. Si hay UTM se sobreescribe a la campaña estándar; si no, se asigna la **orgánica por defecto**.
-
-| Caso | Entrada (UTM/origen) | `utm_campaign` resultante |
-|---|---|---|
-| Meta | facebook / instagram / `*meta*` | `TRAFICO_GENERAL_META_IT1_2026` |
-| Google (pmax/display/yt/dv360) | `*google*` / pmax / discovery | `TRAFICO_GENERAL_GOOGLE_IT1_2026` |
-| Search pago | google/bing search, `*search/marca*` | `LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026` |
-| Otros medios | tiktok / linkedin / pinterest / mailing | `TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026` |
-| **Orgánico (default)** | sin UTM / natural search / chatgpt | `881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026` |
-
-Estas 5 cadenas deben coincidir con las **completion actions** del Form Handler en Pardot (`Agregar a campaña de CRM`).
-
-### Estado actual
-- **103 (script nuevo):** el `else` no asignaba campaña → corregido. Ahora:
-  ```js
-  } else {
-      var oriKey = ((oriF && oriF.value) || 'Google Natural Search').toLowerCase().trim();
-      var def = ORIGINS[oriKey] || ORIGINS['google natural search'];
-      if (oriF) oriF.value = def[0];
-      if (ldF) ldF.value = def[1];
-      if (cmpF) cmpF.value = def[2];   // nunca vacío
-  }
-  ```
-- **36 (script viejo):** ya cumplían vía su fallback terminal `campaignField.value = 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'` + `origen` por defecto `Google Natural Search`. **No requirieron cambios.**
+| Ley | Regla |
+|---|---|
+| **Fuente única** | La BD (`wp_postmeta._elementor_data`) es la verdad. El repo (`Forms-UIDE/`) es un snapshot. |
+| **PHP sobre SQL** | Usar PHP (`mysqli`) para leer y reemplazar. No usar `mysql CLI REPLACE()` sobre JSON escapado. |
+| **Escape doble siempre** | En literales MySQL, `\\"` produce `\"` en el string. `\"` produce solo `"` (backslash ignorado). |
+| **Backup primero** | `mysqldump` de las filas exactas antes de cualquier `UPDATE`. |
+| **Cache al final** | Purgar WP Rocket (`rm -rf cache/wp-rocket/*`) + regenerar Elementor CSS (`wp elementor flush-css --all`). |
+| **Nunca borrar** | `sudo rm -rf uploads/elementor/css/*` — rompe el CSS del sitio. Solo WP-CLI. |
+| **Verificar frontend** | `curl` + `grep` en el HTML servido. La BD puede estar limpia pero el cache sucio. |
+| **Período suelto** | `value=\"2026-1\">` se reemplaza con el valor con nivel (`value=\"2026-2 Q Pregrado\">`). No sirve un `2026-2` genérico. |
+| **Sede posgrados** | En maestrías/posgrados, `sede` siempre es `Quito`. Los formularios generales lo fuerzan vía JS cuando `tp_pgm` contiene "Posgrado". |
 
 ---
 
-## 3. Procedimiento de cambio masivo
+## 1. Tipos de operación
 
-Credenciales de BD: ver `Credenciales_Accesos.md` (NO se versionan aquí). Crear un `~/.uide.cnf` local con `chmod 600`:
+### 1.1 Cambio de IDs de programa (option values)
 
-```ini
+Cambiar el `value` en `<option value="X">Programa</option>` y referencias JS (`programId = "X"`).
+
+**Ejemplo:** Marketing `2→557`, Administración `1→558`
+
+**Técnica:** PHP con `str_replace` exacto. Buscar contexto completo (`value=\"2\">Marketing`) para evitar falsos positivos.
+
+**Páginas afectadas:** formularios generales que listan carreras en `<select>` (Quito pregrado).
+
+### 1.2 Cambio de período por defecto (hidden input)
+
+Cambiar el valor inicial hardcodeado en `<input id="periodo" value="...">` y en el JS `updatePeriodo()`.
+
+**Ejemplo:** `2026-1 Q Pregrado → 2026-2 Q Pregrado`
+
+**Técnica:** PHP con `str_replace` por página (cada página tiene su propio período destino).
+
+**Páginas afectadas:** formularios generales y páginas de programas académicos.
+
+---
+
+## 2. Procedimiento PHP (técnica obligatoria)
+
+### 2.1 Backup
+
+```bash
+# Dump de las filas exactas (usa un .cnf SIN 'database' para mysqldump)
+cat > /tmp/.dump.cnf << 'EOF'
 [client]
 host=10.10.13.47
 port=3306
 user=admin_uide
 password=********
-database=bitn_uide
+EOF
+chmod 600 /tmp/.dump.cnf
+
+IDS="id1,id2,id3,..."
+mysqldump --defaults-extra-file=/tmp/.dump.cnf --no-create-info \
+  --skip-extended-insert --complete-insert bitn_uide wp_postmeta \
+  --where="meta_key='_elementor_data' AND post_id IN ($IDS)" \
+  > /home/toor/backup_$(date +%Y%m%d_%H%M%S).sql
 ```
 
-### 3.1 Backup (siempre primero)
-```bash
-# IDs afectados → lista
-mysql --defaults-extra-file=~/.uide.cnf -N -e "
- SELECT GROUP_CONCAT(p.ID) FROM wp_posts p
- JOIN wp_postmeta m ON m.post_id=p.ID AND m.meta_key='_elementor_data'
- WHERE p.post_status='publish' AND p.post_type<>'revision'
-   AND (m.meta_value LIKE '%pardot-form%' OR m.meta_value LIKE '%go.uide.edu.ec/l/%')" > ids.txt
+### 2.2 Script PHP
 
-# Dump de esas filas (defaults SIN 'database' para mysqldump)
-mysqldump --defaults-extra-file=~/.dump.cnf --no-create-info --skip-extended-insert --complete-insert \
-  bitn_uide wp_postmeta --where="meta_key='_elementor_data' AND post_id IN ($(cat ids.txt))" \
-  > backup_elementor_$(date +%Y%m%d_%H%M%S).sql
+```php
+<?php
+$cnf = parse_ini_file('/home/toor/.uide.cnf');
+$mysqli = new mysqli($cnf['host'], $cnf['user'], $cnf['password'], 
+                     'bitn_uide', (int)$cnf['port']);
+$mysqli->set_charset('utf8mb4');
+
+foreach ($posts as $post_id => $cfg) {
+    // PASO 1: Leer
+    $result = $mysqli->query(
+        "SELECT meta_value FROM wp_postmeta 
+         WHERE post_id = $post_id AND meta_key = '_elementor_data'");
+    $meta = $result->fetch_assoc()['meta_value'];
+    $original_len = strlen($meta);
+
+    // PASO 2: Reemplazar
+    $nuevo = $meta;
+    $nuevo = str_replace($cfg['old'], $cfg['new'], $nuevo, $count);
+
+    // PASO 3: Validar
+    if (strlen($nuevo) < 100 || strlen($nuevo) < $original_len * 0.5) {
+        echo "CANCELADO: tamaño sospechoso\n"; continue;
+    }
+    if ($nuevo === $meta) { echo "Sin cambios\n"; continue; }
+
+    // PASO 4: Escribir
+    $esc = $mysqli->real_escape_string($nuevo);
+    $mysqli->query(
+        "UPDATE wp_postmeta SET meta_value = '$esc' 
+         WHERE post_id = $post_id AND meta_key = '_elementor_data'");
+
+    // PASO 5: Validar JSON
+    $check = $mysqli->query(
+        "SELECT JSON_VALID(meta_value) AS v 
+         FROM wp_postmeta WHERE post_id = $post_id 
+         AND meta_key = '_elementor_data'")->fetch_assoc();
+    if ($check['v'] != 1) { echo "ERROR: JSON inválido\n"; continue; }
+
+    echo "OK: $count reemplazos, JSON válido\n";
+}
 ```
 
-### 3.2 Canary (1 post, validar JSON)
-```sql
-SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;   -- evita "Illegal mix of collations"
-SET @old = 'TEXTO VIEJO ...';
-SET @new = 'TEXTO NUEVO ...';
-UPDATE wp_postmeta SET meta_value = REPLACE(meta_value,@old,@new)
-WHERE meta_key='_elementor_data' AND post_id=69809;
-SELECT LOCATE(@old,meta_value) old_resta, LOCATE(@new,meta_value) new_ok, JSON_VALID(meta_value) json_ok
-FROM wp_postmeta WHERE post_id=69809 AND meta_key='_elementor_data';
--- Esperado: old_resta=0, new_ok>0, json_ok=1
-```
-
-### 3.3 Aplicar al lote
-```sql
-SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
-SET @old='...'; SET @new='...';
-UPDATE wp_postmeta SET meta_value=REPLACE(meta_value,@old,@new)
-WHERE meta_key='_elementor_data' AND post_id IN (/* ids.txt */);
-```
-
-### 3.4 Verificar
-```sql
-SELECT COUNT(*) total,
- SUM(LOCATE(@old,meta_value)>0) viejos_restantes,
- SUM(JSON_VALID(meta_value)=1) json_validos
-FROM wp_postmeta WHERE meta_key='_elementor_data' AND post_id IN (/* ids */);
--- viejos_restantes=0 y json_validos=total
-```
-
-### 3.5 Limpiar caché
-Editar el JSON por SQL **no** regenera el render de Elementor. Purgar:
-- Plugin de caché del sitio (si existe), y/o
-- Elementor → Tools → **Regenerate CSS & Data** / Sync Library.
-
-### 3.6 Rollback
-```bash
-mysql --defaults-extra-file=~/.uide.cnf bitn_uide < backup_elementor_AAAAMMDD_HHMMSS.sql
-```
-
----
-
-## 4. Gotchas de escapado (CRÍTICO)
-
-El HTML dentro de `_elementor_data` guarda los saltos como literal `\r\n` y `/` como `\/`. Al escribir `@old/@new` en SQL:
-
-| Quieres en el contenido | En literal SQL |
-|---|---|
-| `\r\n` (backslash-r-backslash-n) | `\\r\\n` |
-| `'` (comilla simple) | `''` |
-| `/` | `/` (no hace falta escapar al comparar) |
-
-- Siempre `SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci` (la columna es `utf8mb4_unicode_ci`; sin esto, `LIKE`/comparaciones dan *Illegal mix of collations*).
-- Filtra por **`post_id IN (...)`**, no por `LIKE` en `meta_value` (más seguro y evita el choque de colación).
-- Excluir `post_type='revision'` y exigir `post_status='publish'`.
-
----
-
-## 5. Exportar formularios al repo
-
-Re-generar este repo desde la BD (HTML por categoría + URL absoluta en comentario):
+### 2.3 Verificación frontend
 
 ```bash
-# 1) metadatos
-mysql --defaults-extra-file=~/.uide.cnf --batch --skip-column-names -e "
- SELECT p.ID,p.post_type,p.post_name,p.post_status,
-        REPLACE(REPLACE(p.post_title,'\t',' '),'\n',' ')
- FROM wp_posts p JOIN wp_postmeta m ON m.post_id=p.ID AND m.meta_key='_elementor_data'
- WHERE p.post_status='publish' AND p.post_type<>'revision'
-   AND (m.meta_value LIKE '%pardot-form%' OR m.meta_value LIKE '%go.uide.edu.ec/l/%')
- ORDER BY p.post_type,p.ID" > meta.tsv
+# Verificar que el HTML servido tiene el valor nuevo
+curl -sL --max-time 10 "https://www.uide.edu.ec/SLUG/" 2>/dev/null \
+  | grep -oP 'id="periodo"[^>]*value="\K[^"]*' | head -1
 
-# 2) JSON crudo por post (--raw = sin doble-escapar)
-mkdir -p raw
-while IFS=$'\t' read -r id _; do
-  mysql --defaults-extra-file=~/.uide.cnf --raw --batch --skip-column-names \
-    -e "SELECT meta_value FROM wp_postmeta WHERE post_id=$id AND meta_key='_elementor_data'" > raw/$id.json
-done < meta.tsv
-
-# 3) extraer (ver scripts/extract_forms.py)
-python3 scripts/extract_forms.py
+# Barrido de residuales
+for slug in pagina1 pagina2 pagina3; do
+  bad=$(curl -sL --max-time 10 "https://www.uide.edu.ec/$slug/?_=$(date +%s)" \
+    2>/dev/null | grep -c 'VALOR-VIEJO')
+  [ "$bad" -gt 0 ] && echo "✗ $slug: $bad" || echo "✓ $slug"
+done
 ```
 
-`extract_forms.py` recorre el JSON, toma los widgets cuyo HTML contiene `pardot-form`/`updateUtmTracking`/`setCampaignFromOrigen`, antepone un comentario con la URL (`https://www.uide.edu.ec/<slug>/`, según `permalink_structure=/%postname%/`) y escribe `<post_type>/<slug>-<id>.html` en la raíz del repo.
+---
 
-> **El repo es un export (solo lectura).** La fuente de verdad es la BD. "Cambiar" un formulario = editar la regla en SQL (sección 3) y re-exportar; un `git pull` trae la última foto, no modifica el sitio.
+## 3. Escape en MySQL — tabla de referencia
+
+El HTML en `_elementor_data` usa backslash-escapes (`\"`, `\r\n`, `\/`, `\u00f3`). Al escribir literales en SQL:
+
+| Dato almacenado | Literal SQL correcto | Literal SQL INCORRECTO |
+|---|---|---|
+| `\"` (backslash + comilla) | `\\"` | `\"` → produce solo `"` |
+| `\r\n` | `\\r\\n` | `\r\n` → retorno de carro real |
+| `\u00f3` | `\\u00f3` | `\u00f3` → `u00f3` sin backslash |
+| `\/` | `\\/` | `\/` → solo `/` |
+
+**Regla mnemotécnica:** En MySQL, `\` solo escapa `\`, `'`, `"`, `n`, `t`, `r`, `b`, `Z`, `0`, `%`, `_`. Cualquier otra letra después de `\` → el `\` se ignora. Para producir un `\` literal en el string, usar `\\`.
+
+**Usar `LOCATE()`, no `LIKE`:** `LIKE` trata `\` como carácter de escape. `LOCATE()` hace comparación binaria exacta.
+
+```sql
+-- Correcto
+SELECT SUM(LOCATE('value=\\"558\\">', meta_value) > 0) FROM wp_postmeta;
+
+-- Incorrecto (LIKE pierde los backslashes)
+SELECT SUM(meta_value LIKE '%value=\\"558\\">%') FROM wp_postmeta;
+```
 
 ---
 
-## 6. Pendientes / mejoras
+## 4. Post-cambio
 
-- **Persistencia de UTM** (caso JULIO): los UTM solo se leen de la URL al enviar; si el usuario navega antes de enviar, se pierden y cae a orgánico. Persistir en `localStorage` (como ya se hace con `gclid`, ~8 líneas) para atribuir bien el tráfico pago.
-- Unificar los 36 formularios "viejos" al script nuevo (`ORIGINS`) para tener una sola base de código.
+```bash
+# 1. Purgar cache WP Rocket (NO borrar elementor/css/*)
+sudo rm -rf /opt/bitnami/wordpress/wp-content/cache/wp-rocket/*
+
+# 2. Regenerar CSS Elementor (solo WP-CLI)
+sudo -u apache /usr/local/bin/wp elementor flush-css \
+  --path=/opt/bitnami/wordpress --all
+
+# 3. Verificar que el sitio carga
+curl -sI https://www.uide.edu.ec/ | grep HTTP
+```
+
+### Prohibido
+
+- ❌ `sudo rm -rf /opt/bitnami/wordpress/wp-content/uploads/elementor/css/*` — rompe el diseño
+- ❌ `INSERT INTO wp_postmeta` sin verificar `meta_id` duplicado
+- ❌ Reemplazar `2026-1` en URLs de PDFs (ej: `malla-2026-1.pdf`)
+- ❌ Usar `LIKE` en vez de `LOCATE` para buscar en `_elementor_data`
+- ❌ `str_replace('value=\"2026-1\">', 'value=\"2026-2\">', ...)` — el reemplazo sin nivel deja el período genérico
 
 ---
 
-## 7. Seguridad
+## 5. Rollback
 
-- **Nunca** versionar `Credenciales_Accesos.md`, archivos `*.cnf` ni PAT (ver `.gitignore`).
-- Rotar cualquier token o credencial que se haya compartido en texto plano.
+```bash
+# Restaurar desde backup
+mysql --defaults-extra-file=/home/toor/.uide.cnf bitn_uide < backup_AAAAMMDD_HHMMSS.sql
+
+# O restaurar fila por fila (si hay duplicados de meta_id):
+# 1. DELETE FROM wp_postmeta WHERE post_id = X AND meta_key = '_elementor_data';
+# 2. INSERT INTO wp_postmeta (meta_id, post_id, meta_key, meta_value) VALUES (...);
+```
+
+---
+
+## 6. Historial de cambios aplicados
+
+| Fecha | Operación | Detalle | Filas |
+|---|---|---|---|
+| 2026-07-14 | IDs programa | Marketing `2→557`, Administración `1→558` en `<option>` y JS | ~46 |
+| 2026-07-14 | Períodos | `2026-1 → 2026-2` en hidden inputs de 13 páginas generales | 13 |
+| 2026-07-14 | JS updatePeriodo | `2026-1 → 2026-2` en fallbacks JS de 13 páginas | 13 |
+| 2026-07-14 | Maestrías 2027-1 | 9 páginas ya en `2027-1 Online Posgrado`; 1 oculta (Emergencias Sanitarias → draft) | 1 |
+| 2026-07-14 | Educación Básica | Agregada al `posgrado_online` de 21 forms generales (ID 546, etiqueta "Maestría en Educación Básica - O") | 21 |
+| 2026-07-14 | PROGS_2027_1 | Array `[510,515,265,278,546,554]` en `updatePeriodo()` con override al final | 21 |
+| 2026-07-14 | Distancia→Quito | Forzar sede="Quito" en submit para posgrados desde Distancia (mismo patrón Loja/Guayaquil) | 21 |
+| 2026-07-14 | ShowValuesSede | Normalizado `Posgrado Online` → `Posgrado En Línea` para Distancia (consistente con Loja/Guayaquil) | 11 |
+| 2026-07-14 | Limpieza duplicado | Eliminado `sf.value = "Quito"` duplicado en handleConditionalRedirect | 11 |
+
+### 6.1 Lecciones aprendidas de esta sesión
+
+1. **Los acentos en `_elementor_data` son `\uXXXX`:** `str_replace('Educación', ...)` NO funciona. Usar `str_replace('Educaci\u00f3n', ...)`.
+2. **No cambiar el DOM visible en handlers de submit:** el usuario ve el cambio. Solo en `handleConditionalRedirect`.
+3. **Normalizar valores entre ShowValuesSede y handleConditionalRedirect:** si ShowValuesSede ya pone "Posgrado En Línea", no forzarlo de nuevo en submit.
+4. **Un script puede corromper lo que otro arregló:** solapar PHP scripts sobre el mismo código produce duplicados. Limpiar con un script separado.
+5. **Verificar con `curl` DESPUÉS de purgar cache:** el cache de WP Rocket miente.
+
+---
+
+## 7. Archivos de backup
+
+| Archivo | Tamaño | Descripción |
+|---|---|---|
+| `/home/toor/backup_cambio_ids_20260714_095416.sql` | 12 MB | Backup IDs programa |
+| `/home/toor/backup_formularios_general_20260714_102042.sql` | 1.1 MB | Backup períodos generales |
