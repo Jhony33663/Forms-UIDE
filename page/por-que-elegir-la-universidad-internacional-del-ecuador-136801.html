@@ -4,7 +4,7 @@
   URL: https://www.uide.edu.ec/por-que-elegir-la-universidad-internacional-del-ecuador/
   post_id: 136801 | post_type: page | status: publish | slug: por-que-elegir-la-universidad-internacional-del-ecuador
   Origen: wp_postmeta._elementor_data (bitn_uide)
-  Exportado: 2026-06-22
+  Exportado: 2026-08-20
 -->
 
 <!DOCTYPE html>
@@ -367,6 +367,7 @@
             <option value="523">Programa de Validación Gastronomía</option>
             <option value="536">Programa de Validación Telecomunicaciones</option>
             <option value="538">Programa de Validación en Logística y Transporte</option>
+        <option value="553">Programa de Validación en Psicología Organizacional</option>
             <option value="543">Programa de Validación en Administración Pública</option>
             <option value="482">Programa de Validación en Trabajo Social</option>
         </select>
@@ -388,11 +389,12 @@
             <option value="266">Maestría en Energías Renovables</option>
             <option value="424">Maestría En Desarrollo Sostenible y Responsabilidad Social Organizacional</option>
             <option value="544">Maestría en Educación Tecnología e Innovación</option>
+        <option value="546">Maestría en Educación Básica - O</option>
             <option value="524">Maestría en Protección de datos</option>
             <option value="511">Maestría en Derecho laboral y seguridad social</option>
             <option value="277">Maestría en Derecho Procesal Penal y Litigación Oral</option>
             <option value="515">Maestría En Dirección Publicitaria Y Creativa-Online-PG</option>
-            <option value="265">Maestría en marketing y comunicación</option>
+            <!-- <option value="265">Maestría en marketing y comunicación</option> -->
             <option value="246">Maestría en Gestión de Proyectos</option>
             <option value="258">Maestría en Marketing, Mención Estrategia Digital</option>
             <option value="422">Maestría En Inteligencia de Negocios y Comportamiento del Consumidor</option>
@@ -410,6 +412,8 @@
             <option value="540">Maestría en Desarrollo Web</option>
             <option value="541">Maestría en Gestión de la Seguridad Privada</option>
             <option value="542">Maestría en Gestión Educativa</option>
+        <option value="554">Maestría en Derecho de Empresa</option>
+        <option value="555">Maestría en Contabilidad y Auditoría</option>
         </select>
     </div>
     <script>
@@ -425,7 +429,7 @@
             if (sed1 == "Quito") { options = [{ value: 'Pregrado Quito', text: 'Pregrado Quito' }, { value: 'Posgrado Quito', text: 'Posgrado Quito' }]; }
             else if (sed1 == "Guayaquil") { options = [{ value: 'Pregrado Guayaquil', text: 'Pregrado Guayaquil' }, { value: 'Posgrado En Línea', text: 'Posgrado En Línea' }]; }
             else if (sed1 == "Loja") { options = [{ value: 'Pregrado Loja', text: 'Pregrado Loja' }, { value: 'Posgrado En Línea', text: 'Posgrado En Línea' }]; }
-            else if (sed1 == "Distancia") { options = [{ value: 'Pregrado Distancia', text: 'Pregrado En Línea' }, { value: 'Posgrado Online', text: 'Posgrado En Línea' }]; }
+            else if (sed1 == "Distancia") { options = [{ value: 'Pregrado Distancia', text: 'Pregrado En Línea' }, { value: 'Posgrado En Línea', text: 'Posgrado En Línea' }]; }
             options.forEach(function (opt) { var el = document.createElement('option'); el.value = opt.value; el.innerText = opt.text; tipoprogram1.appendChild(el); });
             if (sed1 == "") { tipoprogram1.disabled = true; document.getElementById("div_programas").setAttribute("hidden", true); hideModalidadSelect(); }
             updatePeriodo();
@@ -468,14 +472,15 @@
             updatePeriodo();
         }
         function updatePeriodo() {
-            var v = "2026-1 Online Posgrado"; var tp = document.getElementById("tp_pgm").value || ""; var sede = document.getElementById("sede").value || "";
+            var v = "2026-2 Online Posgrado"; var PROGS_2027_1 = ["510","515","265","278","546","554"]; var tp = document.getElementById("tp_pgm").value || ""; var sede = document.getElementById("sede").value || "";
             var mod = document.getElementById("modalidad_posgrado") ? document.getElementById("modalidad_posgrado").value : ""; var car = document.getElementById("esc_pgm") ? document.getElementById("esc_pgm").value : "";
-            if (tp === "Posgrado En Línea") { v = "2026-1 Online Posgrado"; }
-            else if (sede === "Quito") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Presencial Posgrado"; } else { v = (car === "528") ? "I-EIN-MAY-26" : "2026-1 Q Pregrado"; } }
-            else if (sede === "Loja") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Presencial Posgrado"; } else { v = "2026-1 L Pregrado"; } }
-            else if (sede === "Guayaquil") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Presencial Posgrado"; } else { v = (car === "548") ? "2026-B Enfermeria Internacional Guayaquil Pregrado" : "2026-1 Guayaquil"; } }
-            else if (sede === "Distancia") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Online Posgrado"; } else { if (mod === "Programa Ejecutivo Online") { v = "2026-1 Online PVC"; } else { v = "2026-1 Online Pregrado"; } } }
-            var pe = document.getElementById("periodo"); if (pe) pe.value = v; console.log("Periodo actualizado: " + v);
+            if (tp === "Posgrado En Línea") { v = "2026-2 Online Posgrado"; }
+            else if (sede === "Quito") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Presencial Posgrado"; } else { v = (car === "528") ? "I-EIN-MAY-26" : "2026-1 Q Pregrado"; } }
+            else if (sede === "Loja") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Presencial Posgrado"; } else { v = "2026-1 L Pregrado"; } }
+            else if (sede === "Guayaquil") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Presencial Posgrado"; } else { v = (car === "548") ? "2026-B Enfermeria Internacional Guayaquil Pregrado" : "2026-1 Guayaquil"; } }
+            else if (sede === "Distancia") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Online Posgrado"; } else { if (mod === "Programa Ejecutivo Online") { v = "2026-1 Online PVC"; } else { v = "2026-1 Online Pregrado"; } } }
+            if (PROGS_2027_1.indexOf(car) !== -1 && tp.indexOf("Posgrado") !== -1) { v = "2027-1 Online Posgrado"; }
+        var pe = document.getElementById("periodo"); if (pe) pe.value = v; console.log("Periodo actualizado: " + v);
         }
         function getRedirectUrl() {
             var t = document.getElementById('tp_pgm'), s = document.getElementById('sede'), m = document.getElementById('modalidad_posgrado');
@@ -498,7 +503,7 @@
 
             var sf = document.getElementById("sede"), tf = document.getElementById("tp_pgm");
             if (sf && tf) {
-                if ((sf.value === "Loja" || sf.value === "Guayaquil") && tf.value.toLowerCase().indexOf("posgrado") !== -1) {
+                if ((sf.value === "Loja" || sf.value === "Guayaquil" || sf.value === "Distancia") && tf.value.toLowerCase().indexOf("posgrado") !== -1) {
                     sf.value = "Quito";
                     tf.value = "Posgrado En Línea";
                 }

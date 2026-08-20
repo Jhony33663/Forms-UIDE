@@ -4,7 +4,7 @@
   URL: (plantilla reutilizable de Elementor — embebida en otras páginas, sin URL pública propia)
   post_id: 170897 | post_type: elementor_library | status: publish | slug: blog-pregrado-en-linea
   Origen: wp_postmeta._elementor_data (bitn_uide)
-  Exportado: 2026-06-22
+  Exportado: 2026-08-20
 -->
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
@@ -147,7 +147,7 @@
                 onsubmit="return handleStaticRedirect('https://www.uide.edu.ec/registro-en-linea/');"><input
                     type="hidden" id="sede" name="sede" value="Distancia"><input type="hidden" id="tp_pgm" name="tp_pgm"
                     value="Pregrado Distancia"><input type="hidden" name="periodo" id="periodo"
-                    value="2026-2A Online Pregrado" /><input type="hidden" id="utm_campaign" name="utm_campaign"
+                    value="2026-2 Online Pregrado" /><input type="hidden" id="utm_campaign" name="utm_campaign"
                     value=""><input type="hidden" id="c_lead" name="c_lead" value="Digital"><input type="hidden"
                     id="origen" name="origen" value="Google Natural Search"><input type="hidden" id="gclid" name="gclid"
                     value=""><input type="hidden" name="gclid_h" id="gclid_h" /><input name="_utf8" type="hidden"
@@ -470,9 +470,9 @@
             var periodoField = document.getElementById("periodo");
             if (escPgmField && periodoField) {
                 if (escPgmField.value === "480") { // Administración Pública
-                    periodoField.value = "2026-2A Online Pregrado";
+                    periodoField.value = "2026-2 Online Pregrado";
                 } else {
-                    periodoField.value = "2026-2A Online Pregrado";
+                    periodoField.value = "2026-2 Online Pregrado";
                 }
             }
         }
@@ -481,7 +481,7 @@
         function initForm() {
             var setField = function (id, val) { var el = document.getElementById(id); if (el) el.value = val; };
             // setField("esc_pgm", "519");
-            setField("periodo", "2026-2A Online Pregrado");
+            setField("periodo", "2026-2 Online Pregrado");
             setField("utm_campaign", "881_MF_TRAFICO_GENERAL_ORGANICO_IT1_2026_ONLINE");
             setField("c_lead", "Digital");
             if (typeof setOrigenFromUtm === "function") { setOrigenFromUtm(); }

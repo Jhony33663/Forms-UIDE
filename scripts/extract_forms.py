@@ -47,7 +47,11 @@ def main():
             continue
         parts = (line.split("\t") + ["", "", "", "", ""])[:5]
         pid, ptype, slug, status, title = parts
-        data = json.loads(open(os.path.join(RAW, f"{pid}.json"), encoding="utf-8").read().strip())
+        try:
+            data = json.loads(open(os.path.join(RAW, f"{pid}.json"), encoding="utf-8").read().strip())
+        except json.JSONDecodeError as e:
+            print(f"SKIP (JSON invalido en BD): {pid} - {e}", file=sys.stderr)
+            continue
         chunks = []
         find_form_chunks(data, chunks)
         seen, uniq = set(), []

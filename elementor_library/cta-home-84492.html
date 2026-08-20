@@ -166,7 +166,7 @@
                 <input type="hidden" id="gclid_field" name="gclid_field"> <input type="hidden" id="GCLID" name="GCLID"
                     value="">
                 <input type="hidden" name="hiddenDependentFields" id="hiddenDependentFields" value="" />
-                <input type="hidden" id="periodo" name="periodo" value="2026-1">
+                <input type="hidden" id="periodo" name="periodo" value="2026-2">
                 <input type="hidden" id="esc_pgm" name="esc_pgm" value="">
 
                 <div class="uide-frm-field">
@@ -469,23 +469,23 @@
             updatePeriodo();
         }
         function updatePeriodo() {
-            var v = "2026-1 Online Posgrado"; var tp = document.getElementById("tp_pgm").value || ""; var sede = document.getElementById("sede").value || "";
+            var v = "2026-2 Online Posgrado"; var tp = document.getElementById("tp_pgm").value || ""; var sede = document.getElementById("sede").value || "";
             var mod = document.getElementById("modalidad_posgrado") ? document.getElementById("modalidad_posgrado").value : ""; var car = document.getElementById("esc_pgm") ? document.getElementById("esc_pgm").value : "";
-            if (tp === "Posgrado En Línea") { v = "2026-1 Online Posgrado"; }
+            if (tp === "Posgrado En Línea") { v = "2026-2 Online Posgrado"; }
             else if (sede === "Quito") {
                 if (tp.indexOf("Posgrado") !== -1) {
                     if (car === "501" || car === "502") {
                         v = "2026-2 Presencial Posgrado";
                     } else {
-                        v = "2026-1 Presencial Posgrado";
+                        v = "2026-2 Presencial Posgrado";
                     }
                 } else {
                     v = (car === "528") ? "I-EIN-MAY-26" : "2026-2 Q Pregrado";
                 }
             }
-            else if (sede === "Loja") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Presencial Posgrado"; } else { v = "2026-1 L Pregrado"; } }
-            else if (sede === "Guayaquil") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Presencial Posgrado"; } else { v = (car === "548") ? "2026-B Enfermeria Internacional Guayaquil Pregrado" : "2026-1 Guayaquil"; } }
-            else if (sede === "Distancia") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-1 Online Posgrado"; } else { if (mod === "Programa Ejecutivo Online") { v = "2026-1 Online PVC"; } else { v = "2026-1 Online Pregrado"; } } }
+            else if (sede === "Loja") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Presencial Posgrado"; } else { v = "2026-2 L Pregrado"; } }
+            else if (sede === "Guayaquil") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Presencial Posgrado"; } else { v = (car === "548") ? "2026-B Enfermeria Internacional Guayaquil Pregrado" : "2026-2 Guayaquil"; } }
+            else if (sede === "Distancia") { if (tp.indexOf("Posgrado") !== -1) { v = "2026-2 Online Posgrado"; } else { if (mod === "Programa Ejecutivo Online") { v = "2026-2 Online PVC"; } else { v = "2026-2 Online Pregrado"; } } }
             var pe = document.getElementById("periodo"); if (pe) pe.value = v; console.log("Periodo actualizado: " + v);
         }
         function getRedirectUrl() {

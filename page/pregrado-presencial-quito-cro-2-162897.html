@@ -4,7 +4,7 @@
   URL: https://www.uide.edu.ec/pregrado-presencial-quito-cro-2/
   post_id: 162897 | post_type: page | status: publish | slug: pregrado-presencial-quito-cro-2
   Origen: wp_postmeta._elementor_data (bitn_uide)
-  Exportado: 2026-06-22
+  Exportado: 2026-08-20
 -->
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
@@ -538,6 +538,7 @@
     }
 
     function updateUtmTracking() {
+        if (window.__utmTracked) return; window.__utmTracked = true;
         var srcF = document.getElementById('utm_source'), medF = document.getElementById('utm_medium'), cmpF = document.getElementById('utm_campaign'), trmF = document.getElementById('utm_term'), oriF = document.getElementById('origen'), ldF = document.getElementById('c_lead');
         var src = (getUtmValue('utm_source') || (srcF && srcF.value) || '').toLowerCase().trim();
         var med = (getUtmValue('utm_medium') || (medF && medF.value) || '').toLowerCase().trim();
@@ -565,7 +566,9 @@
             if (ldF) ldF.value = conf[1];
             if (cmpF) cmpF.value = conf[2];
         } else {
-            var oriKey = ((oriF && oriF.value) || 'Google Natural Search').toLowerCase().trim();
+            var ref = (document.referrer || '').toLowerCase();
+            var isSearch = ref.indexOf('google.') !== -1 || ref.indexOf('bing.') !== -1 || ref.indexOf('search.yahoo') !== -1 || ref.indexOf('duckduckgo') !== -1;
+            var oriKey = isSearch ? 'google natural search' : 'formulario web';
             var def = ORIGINS[oriKey] || ORIGINS['google natural search'];
             if (oriF) oriF.value = def[0];
             if (ldF) ldF.value = def[1];

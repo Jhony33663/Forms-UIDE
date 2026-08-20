@@ -4,7 +4,7 @@
   URL: (plantilla reutilizable de Elementor — embebida en otras páginas, sin URL pública propia)
   post_id: 170522 | post_type: elementor_library | status: publish | slug: blog-posgrados
   Origen: wp_postmeta._elementor_data (bitn_uide)
-  Exportado: 2026-06-22
+  Exportado: 2026-08-20
 -->
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
@@ -147,7 +147,7 @@
                 onsubmit="return handleStaticRedirect('https://www.uide.edu.ec/maestrias/registro-posgrados/');">
                 <input type="hidden" id="sede" name="sede" value="Quito">
                 <input type="hidden" id="tp_pgm" name="tp_pgm" value="Posgrado En Línea">
-                <input type="hidden" name="periodo" id="periodo" value="2026-1 Online Posgrado" />
+                <input type="hidden" name="periodo" id="periodo" value="2026-2 Online Posgrado" />
                 <input type="hidden" id="utm_campaign" name="utm_campaign" value="">
                 <input type="hidden" id="utm_source" name="utm_source" value="">
                 <input type="hidden" id="utm_medium" name="utm_medium" value="">
@@ -511,7 +511,7 @@
                 { v: "511", t: "Maestri­a en Derecho laboral y seguridad social" },
                 { v: "277", t: "Maestri­a en Derecho Procesal Penal y Litigacion Oral" },
                 { v: "515", t: "Maestri­a En Direccion Publicitaria Y Creativa-Online-PG" },
-                { v: "265", t: "Maestri­a en marketing y comunicacion" },
+                
                 { v: "246", t: "Maestri­a en Gestion de Proyectos" },
                 { v: "258", t: "Maestri­a en Marketing, Mencion Estrategia Digital" },
                 { v: "422", t: "Maestri­a En Inteligencia de Negocios y Comportamiento del Consumidor" },
@@ -565,7 +565,7 @@
         }
 
         function updatePeriodo() {
-            var periodoValue = "2026-1 Online Posgrado";
+            var periodoValue = "2026-2 Online Posgrado";
             var tp = document.getElementById("tp_pgm").value;
             var escPgm = document.getElementById("esc_pgm").value;
             if (tp.indexOf("Quito") !== -1) {
@@ -573,7 +573,7 @@
                 if (escPgm === "501" || escPgm === "502") {
                     periodoValue = "2026-2 Presencial Posgrado";
                 } else {
-                    periodoValue = "2026-1 Presencial Posgrado";
+                    periodoValue = "2026-2 Presencial Posgrado";
                 }
             }
             var periodoElement = document.getElementById("periodo");
@@ -617,7 +617,7 @@
 
         /* Auto-run on load */ (function() {
         function initForm() {
-            setField("periodo", "2026-1 Online Posgrado");
+            setField("periodo", "2026-2 Online Posgrado");
             setField("utm_campaign", "881_MF_TRAFICO_GENERAL_ORGANICO_IT1_2026_ONLINE");
             setField("c_lead", "Digital");
 

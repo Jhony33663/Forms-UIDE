@@ -4,7 +4,7 @@
   URL: https://www.uide.edu.ec/programa-de-validacion/
   post_id: 158758 | post_type: page | status: publish | slug: programa-de-validacion
   Origen: wp_postmeta._elementor_data (bitn_uide)
-  Exportado: 2026-06-22
+  Exportado: 2026-08-20
 -->
 
 <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans" />
@@ -148,7 +148,7 @@
             onsubmit="return handleStaticRedirect('https://www.uide.edu.ec/registro-en-linea/');"><input type="hidden"
                 id="sede" name="sede" value="Distancia"><input type="hidden" id="tp_pgm" name="tp_pgm"
                 value="Pregrado Distancia"><input type="hidden" name="periodo" id="periodo"
-                value="2026-2A Online PVC" /><input type="hidden" id="utm_campaign" name="utm_campaign" value=""><input
+                value="2026-2 Online PVC" /><input type="hidden" id="utm_campaign" name="utm_campaign" value=""><input
                 type="hidden" id="c_lead" name="c_lead" value="Digital"><input type="hidden" id="origen" name="origen"
                 value="Google Natural Search"><input type="hidden" id="gclid" name="gclid" value=""><input type="hidden"
                 name="gclid_h" id="gclid_h" /><input name="_utf8" type="hidden" value="&#9731;" /><input type="hidden"
@@ -467,9 +467,9 @@
         var periodoField = document.getElementById("periodo");
         if (escPgmField && periodoField) {
             if (escPgmField.value === "543") { // Administración Pública
-                periodoField.value = "2026-2A Online PVC";
+                periodoField.value = "2026-2 Online PVC";
             } else {
-                periodoField.value = "2026-2A Online PVC";
+                periodoField.value = "2026-2 Online PVC";
             }
         }
     }
@@ -480,7 +480,7 @@
                 var el = document.getElementById(id); if (el) el.value = val;
             };
             // setField("esc_pgm", "519");
-            setField("periodo", "2026-2A Online PVC");
+            setField("periodo", "2026-2 Online PVC");
             setField("utm_campaign", "881_MF_TRAFICO_GENERAL_ORGANICO_IT1_2026_ONLINE");
             setField("c_lead", "Digital");
             if (typeof setOrigenFromUtm === "function") { setOrigenFromUtm(); }
@@ -542,6 +542,7 @@
     }
 
     function updateUtmTracking() {
+        if (window.__utmTracked) return; window.__utmTracked = true;
         var srcF = document.getElementById('utm_source'), medF = document.getElementById('utm_medium'), cmpF = document.getElementById('utm_campaign'), trmF = document.getElementById('utm_term'), oriF = document.getElementById('origen'), ldF = document.getElementById('c_lead');
         var src = (getUtmValue('utm_source') || (srcF && srcF.value) || '').toLowerCase().trim();
         var med = (getUtmValue('utm_medium') || (medF && medF.value) || '').toLowerCase().trim();
@@ -569,7 +570,9 @@
             if (ldF) ldF.value = conf[1];
             if (cmpF) cmpF.value = conf[2];
         } else {
-            var oriKey = ((oriF && oriF.value) || 'Google Natural Search').toLowerCase().trim();
+            var ref = (document.referrer || '').toLowerCase();
+            var isSearch = ref.indexOf('google.') !== -1 || ref.indexOf('bing.') !== -1 || ref.indexOf('search.yahoo') !== -1 || ref.indexOf('duckduckgo') !== -1;
+            var oriKey = isSearch ? 'google natural search' : 'formulario web';
             var def = ORIGINS[oriKey] || ORIGINS['google natural search'];
             if (oriF) oriF.value = def[0];
             if (ldF) ldF.value = def[1];
