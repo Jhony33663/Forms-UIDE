@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base href="">
+    <meta charset="utf-8" />
+    <meta name="description" content="" />
+    <META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    <link rel="stylesheet" type="text/css" href="https://go.uide.edu.ec/css/form.css?ver=2021-09-20" />
+    <title></title>
+    <style>
+        a { color: #eaaa00 }
+        a:hover { color: #eaaa00 }
+    </style>
+
+    <!-- ============================================================
+         LÓGICA PRINCIPAL (actualizada desde form-home 2026)
+         ============================================================ -->
+    <script type="text/javascript">
+
+        /* ---------- UTM helpers ---------- */
+        var ORIGINS = {
+            'audience network ads': ['Audience Network Ads',  'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'bing ads':             ['Bing Ads',              'Digital', 'LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026'],
+            'bing natural search':  ['Bing Natural Search',   'Digital', '881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026'],
+            'chat en linea':        ['Chat En Línea',         'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'chat en línea':        ['Chat En Línea',         'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'chat tiktok':          ['Chat Tiktok',           'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'chatgpt':              ['Chatgpt',               'Digital', '881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026'],
+            'direct messenger ads': ['Direct Messenger Ads',  'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'facebook':             ['Facebook',              'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'facebook ads':         ['Facebook Ads',          'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'formulario web':       ['Formulario Web',        'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'google display':       ['Google Display',        'Digital', 'TRAFICO_GENERAL_GOOGLE_IT1_2026'],
+            'google demandgen':     ['Google Demandgen',      'Digital', 'TRAFICO_GENERAL_GOOGLE_IT1_2026'],
+            'google discovery':     ['Google Discovery',      'Digital', 'TRAFICO_GENERAL_GOOGLE_IT1_2026'],
+            'google natural search':['Google Natural Search', 'Digital', '881_MF_TRAFICO_GENERAL_ORGANICO_SEO_SEARCH_IT1_2026'],
+            'google pmax':          ['Google Pmax',           'Digital', 'TRAFICO_GENERAL_GOOGLE_IT1_2026'],
+            'google search':        ['Google Search',         'Digital', 'LEADS_GENERAL_GOOGLE_SEARCH_IT1_2026'],
+            'influencers':          ['Influencers',           'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'instagram':            ['Instagram',             'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'instagram ads':        ['Instagram Ads',         'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'linkedin':             ['Linkedin',              'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'linkedin ads':         ['Linkedin Ads',          'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'mailing':              ['Mailing',               'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'messenger ads':        ['Messenger Ads',         'Digital', 'TRAFICO_GENERAL_META_IT1_2026'],
+            'pinterest':            ['Pinterest',             'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'pinterest ads':        ['Pinterest Ads',         'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'revistas digitales':   ['Revistas Digitales',    'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'tiktok':               ['Tiktok',                'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'tiktok ads':           ['Tiktok Ads',            'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'x ads':                ['X Ads',                 'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'youtube ads':          ['Youtube Ads',           'Digital', 'TRAFICO_GENERAL_GOOGLE_IT1_2026'],
+            'dv360':                ['DV360',                 'Digital', 'TRAFICO_GENERAL_GOOGLE_IT1_2026'],
+            'spotify':              ['Spotify',               'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'vix':                  ['Vix',                   'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'teads':                ['Teads',                 'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026'],
+            'hbo ads':              ['HBO Ads',               'Digital', 'TRAFICO_GENERAL_OTROS_MEDIOS_IT1_2026']
+        };
+
+        function getParamFromUrl(p, query) {
+            var match = RegExp('[?&]' + p + '=([^&]*)').exec(query);
+            return match && decodeURIComponent(match[1].replace(/+/g, ' '));
+        }
+        function getParam(p) { return getParamFromUrl(p, window.location.search); }
+        function getUtmValue(p) {
+            var direct = getParam(p); if (direct) return direct;
+            try {
+                if (window.top && window.top.location && window.top.location.search) {
+                    var fromTop = getParamFromUrl(p, window.top.location.search);
+                    if (fromTop) return fromTop;
+                }
+            } catch(e) {}
+            return getParamFromUrl(p, document.referrer || '');
+        }
+
+        /* ---------- Actualización de UTM → origen/c_lead/campaña ----------
+           IMPORTANTE B2B: Si no hay UTMs activos, se respetan los valores
+           por defecto del formulario (origen="Capacitación empresas",
+           c_lead="Prospeccion", utm_campaign="Campaña general B2B").
+        -------------------------------------------------------------------- */
+        function updateUtmTracking() {
+            var srcF = document.getElementById('utm_source'),
+                medF = document.getElementById('utm_medium'),
+                cmpF = document.getElementById('utm_campaign'),
+                trmF = document.getElementById('utm_term'),
+                oriF = document.getElementById('origen'),
+                ldF  = document.getElementById('c_lead');
+
+            var src = (getUtmValue('utm_source')   || '').toLowerCase().trim();
+            var med = (getUtmValue('utm_medium')   || '').toLowerCase().trim();
+            var cmp = (getUtmValue('utm_campaign') || '').toLowerCase().trim();
+            var trm = (getUtmValue('utm_term')     || '').trim();
+
+            /* Solo sobrescribir si existen parámetros UTM en la URL */
+            var hasUtm = !!(src || med || cmp);
+
+            if (srcF && getUtmValue('utm_source'))   srcF.value = getUtmValue('utm_source');
+            if (medF && getUtmValue('utm_medium'))   medF.value = getUtmValue('utm_medium');
+            if (cmpF && getUtmValue('utm_campaign')) cmpF.value = getUtmValue('utm_campaign');
+            if (trmF && trm) trmF.value = trm;
+
+            if (!hasUtm) return; /* Sin UTMs → mantener valores B2B por defecto */
+
+            var key = '';
+            if (ORIGINS[src])      key = src;
+            else if (ORIGINS[med]) key = med;
+            else if (ORIGINS[cmp]) key = cmp;
+            else {
+                if (cmp.includes('meta'))       key = 'facebook';
+                else if (cmp.includes('search') || cmp.includes('marca') ||
+                         cmp.includes('competencia') || cmp.includes('categoria')) key = 'google search';
+                else if (cmp.includes('google') || cmp.includes('pmax') ||
+                         cmp.includes('demand') || cmp.includes('discovery')) key = 'google pmax';
+            }
+
+            var conf = ORIGINS[key];
+            if (conf) {
+                if (oriF) oriF.value = conf[0];
+                if (ldF)  ldF.value  = conf[1];
+                if (cmpF) cmpF.value = conf[2];
+            }
+            /* Si no coincide nada, se respetan los valores B2B por defecto */
+            /* Fijo convenio: el nombre de campaña siempre es "Campaña general B2B" */
+            if (cmpF) cmpF.value = 'Campaña general B2B';
+        }
+
+        /* Compatibilidad con llamadas antiguas */
+        function setOrigenFromUtm()      { updateUtmTracking(); }
+        function setCampaignFromOrigen() { updateUtmTracking(); }
+        function setLeadChannelFromOrigen() { updateUtmTracking(); }
+        function setUtmFieldsFromUrl()   { updateUtmTracking(); }
+
+        /* ---------- GCLID ---------- */
+        function getExpiryRecord(value) {
+            return { value: value, expiryDate: new Date().getTime() + (90 * 24 * 60 * 60 * 1000) };
+        }
+        function addGclid() {
+            var gclidParam  = getParam('gclid');
+            var gclsrcParam = getParam('gclsrc');
+            var isGclsrcValid = !gclsrcParam || gclsrcParam.indexOf('aw') !== -1;
+            var curr = document.getElementById('gclid_field') || document.getElementById('455762_454671pi_455762_454671');
+            if (gclidParam && isGclsrcValid) {
+                localStorage.setItem('gclid', JSON.stringify(getExpiryRecord(gclidParam)));
+            }
+            var gclid = JSON.parse(localStorage.getItem('gclid'));
+            var isValid = gclid && new Date().getTime() < gclid.expiryDate;
+            if (curr && isValid) curr.value = gclid.value;
+            if (isValid && document.querySelector('.GCLID input')) {
+                document.querySelector('.GCLID input').value = gclid.value;
+            }
+        }
+
+        /* ---------- Sede / Tipo de programa ---------- */
+        function ShowValuesSede() {
+            var sed1 = document.getElementById("sede").value;
+            var tipoprogram1 = document.getElementById("tp_pgm");
+            tipoprogram1.innerHTML = '<option value="">Tipo de programa *</option>';
+            tipoprogram1.disabled = false;
+            var options = [];
+            if      (sed1 == "Quito")     options = [{value:'Pregrado Quito',    text:'Pregrado Quito'},   {value:'Posgrado Quito',   text:'Posgrado Quito'}];
+            else if (sed1 == "Guayaquil") options = [{value:'Pregrado Guayaquil',text:'Pregrado Guayaquil'},{value:'Posgrado En Línea',text:'Posgrado En Línea'}];
+            else if (sed1 == "Loja")      options = [{value:'Pregrado Loja',     text:'Pregrado Loja'},    {value:'Posgrado En Línea',text:'Posgrado En Línea'}];
+            else if (sed1 == "Distancia") options = [{value:'Pregrado Distancia',text:'Pregrado En Línea'},{value:'Posgrado Online',  text:'Posgrado En Línea'}];
+            options.forEach(function(opt) {
+                var el = document.createElement('option');
+                el.value = opt.value; el.innerText = opt.text;
+                tipoprogram1.appendChild(el);
+            });
+            if (sed1 == "") {
+                tipoprogram1.disabled = true;
+                document.getElementById("div_programas").setAttribute("hidden", true);
+                hideModalidadSelect();
+            }
+            updatePeriodo();
+        }
+
+        function hideModalidadSelect() {
+            document.getElementById("modalidad_container").style.display = "none";
+        }
+
+        function showModalidadSelect(sede) {
+            var mc = document.getElementById("modalidad_container");
+            var ms = document.getElementById("modalidad_posgrado");
+            mc.style.display = "block";
+            ms.innerHTML = '<option value="">Seleccione modalidad *</option>';
+            var mod = [];
+            if (sede == "Quito") {
+                mod = [{value:'Posgrado Quito Hibrida',       text:'Híbrida'},
+                       {value:'Posgrado Quito Semipresencial',text:'Semipresencial'}];
+            } else {
+                mod = [{value:'Posgrado Online', text:'Online'}];
+            }
+            mod.forEach(function(m) {
+                var opt = document.createElement('option');
+                opt.value = m.value; opt.textContent = m.text;
+                ms.appendChild(opt);
+            });
+        }
+
+        function showModalidadSelectPregrado(sede) {
+            var mc = document.getElementById("modalidad_container");
+            var ms = document.getElementById("modalidad_posgrado");
+            if (sede == "Distancia") {
+                mc.style.display = "block";
+                ms.innerHTML = '<option value="">Seleccione modalidad *</option>';
+                [{value:'Pregrado Online',          text:'General'},
+                 {value:'Programa Ejecutivo Online',text:'Validación'}].forEach(function(m) {
+                    var opt = document.createElement('option');
+                    opt.value = m.value; opt.textContent = m.text;
+                    ms.appendChild(opt);
+                });
+            }
+        }
+
+        function handleTipoProgramaChange(event) {
+            var val  = event.target.value;
+            var sede = document.getElementById("sede").value;
+            document.getElementById("div_programas").setAttribute("hidden", true);
+            if      (val.includes('Posgrado')) { showModalidadSelect(sede); }
+            else if (val.includes('Pregrado')) {
+                if (sede == "Distancia") { showModalidadSelectPregrado(sede); }
+                else { hideModalidadSelect(); mostrar_programas(event); }
+            } else { hideModalidadSelect(); }
+            updatePeriodo();
+        }
+
+        function handleModalidadChange(event) {
+            var s = { target: { value: event.target.value } };
+            mostrar_programas(s);
+            updatePeriodo();
+        }
+
+        /* ---------- Mostrar programas ---------- */
+        function mostrar_programas(event) {
+            var val = event.target.value;
+            var d1  = document.getElementById("div_programas");
+            var d2  = document.getElementById("div_programas_2");
+
+            d1.querySelectorAll('select').forEach(function(s) {
+                d2.appendChild(s);
+                s.removeAttribute("required");
+            });
+            d1.innerHTML = "";
+
+            var tId = "";
+            if      (val == "Pregrado Quito")                           tId = "pregrado_quito";
+            else if (val == "Posgrado Quito")                           tId = "posgrado_quito";
+            else if (val == "Pregrado Loja")                            tId = "pregrado_loja";
+            else if (val == "Posgrado Loja")                            tId = "posgrado_loja";
+            else if (val == "Pregrado Guayaquil")                       tId = "pregrado_guayaquil";
+            else if (val == "Posgrado Guayaquil")                       tId = "posgrado_guayaquil";
+            else if (val == "Pregrado Online" || val == "Pregrado Distancia") tId = "pregrado_online";
+            else if (val == "Posgrado Online" || val == "Posgrado En Línea")  tId = "posgrado_online";
+            else if (val == "Posgrado Quito Hibrida")                   tId = "posgrado_quito_hibrida";
+            else if (val == "Posgrado Quito Semipresencial")            tId = "posgrado_quito";
+            else if (val == "Programa Ejecutivo Online")                tId = "programa_ejecutivo_online";
+
+            if (tId) {
+                var el = document.getElementById(tId);
+                if (el) {
+                    d1.appendChild(el);
+                    d1.removeAttribute("hidden");
+                    el.setAttribute("required", true);
+                }
+            }
+        }
+
+        /* ---------- Capturar programa ---------- */
+        function capturar_programa(event) {
+            var s = event.target;
+            var v = s.value;
+            var t = s.options[s.selectedIndex].text;
+            document.getElementById("esc_pgm").value = v;
+
+            var cIn = document.getElementById("carrera");
+            if (!cIn) {
+                cIn = document.createElement("input");
+                cIn.type = "hidden"; cIn.id = "carrera"; cIn.name = "carrera";
+                document.getElementById("pardot-form").appendChild(cIn);
+            }
+            cIn.value = v;
+
+            var pIn = document.getElementById("programa");
+            if (!pIn) {
+                pIn = document.createElement("input");
+                pIn.type = "hidden"; pIn.id = "programa"; pIn.name = "programa";
+                document.getElementById("pardot-form").appendChild(pIn);
+            }
+            pIn.value = t;
+            updatePeriodo();
+        }
+
+        /* ---------- Periodo ---------- */
+        function updatePeriodo() {
+            var sede = document.getElementById("sede").value || "";
+            var tp   = document.getElementById("tp_pgm").value || "";
+            var mod  = document.getElementById("modalidad_posgrado") ?
+                        document.getElementById("modalidad_posgrado").value : "";
+            var car  = document.getElementById("esc_pgm") ?
+                        document.getElementById("esc_pgm").value : "";
+            var v    = "2026-2 Online Posgrado";
+
+            if (tp === "Posgrado En Línea") {
+                v = "2026-2 Online Posgrado";
+            } else if (sede === "Quito") {
+                if (tp.indexOf("Posgrado") !== -1) {
+                    v = "2026-2 Presencial Posgrado";
+                } else {
+                    v = (car === "528") ? "II-EIN-AGO-26" : "2026-2 Q Pregrado";
+                }
+            } else if (sede === "Loja") {
+                v = (tp.indexOf("Posgrado") !== -1) ? "2026-2 Presencial Posgrado" : "2026-2 L Pregrado";
+            } else if (sede === "Guayaquil") {
+                v = (tp.indexOf("Posgrado") !== -1) ? "2026-2 Presencial Posgrado" :
+                    (car === "548") ? "II-EIN-GY-AGO-26" : "2026-2 Guayaquil";
+            } else if (sede === "Distancia") {
+                if (tp.indexOf("Posgrado") !== -1) {
+                    v = "2026-2 Online Posgrado";
+                } else {
+                    v = (mod === "Programa Ejecutivo Online") ? "2026-2 Online PVC" : "2026-2 Online Pregrado";
+                }
+            }
+
+            var pe = document.getElementById("periodo");
+            if (pe) pe.value = v;
+            console.log("Periodo actualizado: " + v);
+        }
+
+
+        /* ---------- Teléfono ---------- */
+        function showToast(message) {
+            var toast = document.getElementById("toast_message");
+            if (!toast) return;
+            toast.textContent = message;
+            toast.classList.add("show");
+            window.setTimeout(function() { toast.classList.remove("show"); }, 3000);
+        }
+
+        function enforceMobileDigits() {
+            var countryCode = document.getElementById('country_code').value;
+            var phoneInput  = document.getElementById('mobile');
+            if (!phoneInput) return;
+            phoneInput.value = phoneInput.value.replace(/D/g, '');
+            validatePhoneByCountry();
+        }
+
+        function enforceCedulaDigits() {
+            var cedulaInput = document.getElementById('cedula');
+            if (!cedulaInput) return;
+            var val = cedulaInput.value.replace(/D/g, '');
+            if (val.length > 10) { val = val.substring(0, 10); showToast('Cédula: máximo 10 dígitos'); }
+            cedulaInput.value = val;
+        }
+
+        /* ---------- Validación de teléfono (lógica nueva) ---------- */
+        (function() {
+            if (window.__uidePhoneEnhancer) return;
+            window.__uidePhoneEnhancer = true;
+
+            var ECUADOR_PHONE_MESSAGE = 'Ingresa un celular ecuatoriano valido: usa 9 digitos o 10 con 0 inicial.';
+
+            function getPhoneField()   { return document.getElementById('mobile')       || document.querySelector('input[name=mobile]'); }
+            function getCountryField() { return document.getElementById('country_code'); }
+            function onlyDigits(v)     { return (v || '').replace(/D/g, ''); }
+            function getCountryCode()  { var f = getCountryField(); return f ? (f.value || '') : ''; }
+
+            function trimEcuadorDisplay(value) {
+                var digits = onlyDigits(value);
+                if (digits.indexOf('00593') === 0) digits = digits.slice(5);
+                else if (digits.indexOf('593') === 0) digits = digits.slice(3);
+                if (digits.length > 10) digits = digits.slice(0, 10);
+                return digits;
+            }
+
+            function getEcuadorPayload(value) {
+                var digits = trimEcuadorDisplay(value);
+                if (!digits || digits.indexOf('00') === 0 || /^0+$/.test(digits)) return null;
+                if (digits.length === 10 && digits.charAt(0) === '0') {
+                    return digits.charAt(1) === '0' ? null : digits.slice(1);
+                }
+                if (digits.length === 9 && digits.charAt(0) !== '0') return digits;
+                return null;
+            }
+
+            function syncEcuadorDisplay() {
+                var phoneField = getPhoneField();
+                if (!phoneField || getCountryCode() !== '+593') return;
+                phoneField.value = trimEcuadorDisplay(phoneField.value);
+            }
+
+            window.validatePhoneByCountry = function() {
+                var phoneField   = getPhoneField();
+                if (!phoneField) return true;
+                var countryCode  = getCountryCode();
+                var phoneValue   = phoneField.value || '';
+                var validationRules = {
+                    '+593': {min:9, max:10, name:'Ecuador'},
+                    '+1':   {min:10,max:10, name:'USA/Canadá'},
+                    '+52':  {min:10,max:10, name:'México'},
+                    '+57':  {min:10,max:10, name:'Colombia'},
+                    '+51':  {min:9, max:9,  name:'Perú'},
+                    '+56':  {min:9, max:9,  name:'Chile'},
+                    '+54':  {min:10,max:10, name:'Argentina'},
+                    '+55':  {min:11,max:11, name:'Brasil'},
+                    '+34':  {min:9, max:9,  name:'España'},
+                    '+44':  {min:10,max:10, name:'Reino Unido'}
+                };
+                if (!phoneValue) { phoneField.setCustomValidity(''); return true; }
+                if (countryCode === '+593') {
+                    syncEcuadorDisplay();
+                    var payload = getEcuadorPayload(phoneField.value);
+                    phoneField.setCustomValidity(payload ? '' : ECUADOR_PHONE_MESSAGE);
+                    return !!payload;
+                }
+                var rule = validationRules[countryCode];
+                if (!rule) { phoneField.setCustomValidity(''); return true; }
+                var digitCount = onlyDigits(phoneValue).length;
+                if (digitCount < rule.min || digitCount > rule.max) {
+                    phoneField.setCustomValidity('El número para ' + rule.name + ' debe tener ' +
+                        (rule.min === rule.max ? rule.min : rule.min + '-' + rule.max) + ' dígitos');
+                    return false;
+                }
+                phoneField.setCustomValidity('');
+                return true;
+            };
+
+            function normalizePhoneForSubmit() {
+                var phoneField  = getPhoneField();
+                if (!phoneField) return true;
+                var countryCode = getCountryCode();
+                var rawValue    = phoneField.value || '';
+                if (!rawValue) { phoneField.setCustomValidity(''); return true; }
+                if (countryCode === '+593') {
+                    var payload = getEcuadorPayload(rawValue);
+                    if (!payload) { phoneField.setCustomValidity(ECUADOR_PHONE_MESSAGE); return false; }
+                    phoneField.value = '+593' + payload;
+                    phoneField.setCustomValidity('');
+                    return true;
+                }
+                var digits = onlyDigits(rawValue);
+                if (!digits) { phoneField.setCustomValidity(''); return true; }
+                if (countryCode && rawValue.indexOf(countryCode) !== 0) {
+                    phoneField.value = countryCode + digits;
+                }
+                return true;
+            }
+
+            document.addEventListener('input', function(e) {
+                var pf = getPhoneField();
+                if (pf && e.target === pf) {
+                    if (getCountryCode() === '+593') syncEcuadorDisplay();
+                    window.validatePhoneByCountry();
+                }
+            });
+            document.addEventListener('change', function(e) {
+                var pf = getPhoneField(), cf = getCountryField();
+                if ((pf && e.target === pf) || (cf && e.target === cf)) {
+                    if (getCountryCode() === '+593') syncEcuadorDisplay();
+                    window.validatePhoneByCountry();
+                }
+            });
+
+            var form = document.getElementById('pardot-form') || document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    if (!normalizePhoneForSubmit()) {
+                        e.preventDefault(); e.stopImmediatePropagation();
+                        if (typeof form.reportValidity === 'function') form.reportValidity();
+                    }
+                }, true);
+            }
+            window.addEventListener('load', function() {
+                if (getCountryCode() === '+593') syncEcuadorDisplay();
+                window.validatePhoneByCountry();
+            });
+        })();
+
+        /* ---------- GCLID enhancer ---------- */
+        (function() {
+            if (window.__uideGclidEnhancer) return;
+            window.__uideGclidEnhancer = true;
+            function setIfPresent(id, value) { var el = document.getElementById(id); if (el && value) el.value = value; }
+            function syncGclid() {
+                var gclid = getParam('gclid');
+                if (!gclid) {
+                    var field = document.getElementById('gclid') || document.getElementById('gclid_field') ||
+                                document.getElementById('gclid_h') || document.getElementById('GCLID');
+                    gclid = field ? (field.value || '') : '';
+                }
+                if (!gclid) return;
+                setIfPresent('gclid', gclid); setIfPresent('gclid_field', gclid);
+                setIfPresent('gclid_h', gclid); setIfPresent('GCLID', gclid);
+                var gclidClassField = document.querySelector('.GCLID input');
+                if (gclidClassField) gclidClassField.value = gclid;
+            }
+            window.addEventListener('load', syncGclid);
+            syncGclid();
+        })();
+
+        /* ---------- URL de redirección ---------- */
+        function getRedirectUrl() {
+            var tp  = (document.getElementById('tp_pgm')             ? document.getElementById('tp_pgm').value             : '').toLowerCase();
+            var se  = (document.getElementById('sede')               ? document.getElementById('sede').value               : '').toLowerCase();
+            var mod = (document.getElementById('modalidad_posgrado') ? document.getElementById('modalidad_posgrado').value : '').toLowerCase();
+            if (tp.includes('posgrado') || mod.includes('posgrado')) return 'https://www.uide.edu.ec/maestrias/registro-posgrados/';
+            if (se.includes('distancia')) return 'https://www.uide.edu.ec/registro-en-linea/';
+            if (se.includes('quito') || se.includes('loja') || se.includes('guayaquil')) return 'https://www.uide.edu.ec/registro/';
+            return 'https://www.uide.edu.ec/registro/';
+        }
+
+        /* ---------- Submit principal ---------- */
+        function handleConditionalRedirect(form) {
+            /* UTM tracking */
+            if (typeof setOrigenFromUtm      === "function") setOrigenFromUtm();
+            if (typeof setCampaignFromOrigen === "function") setCampaignFromOrigen();
+
+            /* Corrección posgrado sede */
+            var sf = document.getElementById("sede"), tf = document.getElementById("tp_pgm");
+            if (sf && tf) {
+                if ((sf.value === "Loja" || sf.value === "Guayaquil") &&
+                    tf.value.toLowerCase().indexOf("posgrado") !== -1) {
+                    sf.value = "Quito";
+                    tf.value = "Posgrado En Línea";
+                }
+            }
+
+            /* Teléfono */
+            var cc = document.getElementById("country_code"), mb = document.getElementById("mobile");
+            if (cc && mb) {
+                var ccv = cc.value || "", mv = mb.value || "";
+                if (ccv === '+593') {
+                    if (mv.indexOf(ccv) === 0) mv = mv.slice(ccv.length);
+                    mv = mv.replace(/^0+/, '');
+                    if (!/^[0-9]{9}$/.test(mv)) { showToast("Celular: ingresa 9 dígitos sin 0 inicial"); mb.focus(); return false; }
+                    mb.value = ccv + mv;
+                } else if (ccv && mv && mv.indexOf(ccv) !== 0) {
+                    mb.value = ccv + mv;
+                }
+            }
+
+            /* Cédula */
+            var cedulaField = document.getElementById("cedula");
+            if (cedulaField) {
+                var ced = cedulaField.value.replace(/D/g, '');
+                if (!/^[0-9]{10}$/.test(ced)) {
+                    showToast("Cédula: ingresa exactamente 10 dígitos");
+                    cedulaField.focus();
+                    return false;
+                }
+                cedulaField.value = ced;
+            }
+
+            /* Empresa: enviar value, no texto */
+            var empresaField = document.getElementById("empresa");
+            if (empresaField && empresaField.selectedIndex >= 0) {
+                var eVal  = empresaField.options[empresaField.selectedIndex].value;
+                var eTxt  = empresaField.options[empresaField.selectedIndex].text;
+                empresaField.value = ((eVal || "").toLowerCase() === "otra" ||
+                                      (eTxt  || "").toLowerCase() === "otro") ? "Otra" : eVal;
+            }
+
+            var formEl = form || document.getElementById("pardot-form");
+            if (formEl) {
+                if (typeof registrarUsuarioIdentificado === "function") registrarUsuarioIdentificado();
+                formEl.submit();
+                setTimeout(function() { window.open(getRedirectUrl(), "_blank"); }, 300);
+                setTimeout(function() { formEl.reset(); }, 400);
+            }
+            return false;
+        }
+
+        /* ---------- DataLayer ---------- */
+        function registrarFormularioVisible() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'form_visible', 'form_name': 'form-b2b',
+                'form_destination': 'https://www.uide.edu.ec/registro/',
+                'form_submit_text': 'Solicita información'
+            });
+        }
+        function registrarErrorFormulario(mensajeError, campoOrigen) {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({'event':'error_message','error_mesage_text':mensajeError,'error_message_location':campoOrigen});
+        }
+        function registrarUsuarioIdentificado() {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({'event':'user_identified'});
+        }
+
+        /* ---------- Init ---------- */
+        window.addEventListener('load', function() {
+            updateUtmTracking();
+            addGclid();
+            registrarFormularioVisible();
+
+
+            var g_controller = 0;
+            var myInterval = setInterval(function() {
+                g_controller++;
+                var gclidField = document.querySelector('p[class*="GCLID"] input');
+                addGclid();
+                if (gclidField && gclidField.value) { clearInterval(myInterval); }
+                else if (gclidField && !gclidField.value) { window.parent.postMessage('addGclid', '*'); }
+                if (g_controller > 30) clearInterval(myInterval);
+            }, 1000);
+        });
+
+    </script>
+
+    <!-- Pardot tracking -->
+    <script type="text/javascript">
+        piAId = '456762'; piCId = '211309'; piHostname = 'pi.pardot.com';
+        if (!window['pi']) { window['pi'] = {}; } pi = window['pi'];
+        if (!pi['tracker']) { pi['tracker'] = {}; } pi.tracker.pi_form = true;
+        (function() {
+            function async_load() {
+                var s = document.createElement('script'); s.type = 'text/javascript';
+                s.src = ('https:' == document.location.protocol ? 'https://pi' : 'http://cdn') + '.pardot.com/pd.js';
+                var c = document.getElementsByTagName('script')[0]; c.parentNode.insertBefore(s, c);
+            }
+            if (window.attachEvent) window.attachEvent('onload', async_load);
+            else window.addEventListener('load', async_load, false);
+        })();
+    </script>
+</head>
+
+<body>
+    <iframe name="hidden_iframe" style="display:none"></iframe>
+    <div id="toast_message" aria-live="polite"></div>
+
+    <style type="text/css">
+        body, html { margin:0; padding:0; height:100%; font-size:14px; font-family:"Open Sans",sans-serif; box-sizing:border-box; overflow-x:hidden; }
+        *, *:before, *:after { box-sizing:inherit; }
+        #toast_message { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:rgba(33,33,33,.92); color:#fff; padding:10px 16px; border-radius:4px; font-size:13px; opacity:0; pointer-events:none; transition:opacity .2s ease-in-out; z-index:9999; max-width:90%; text-align:center; }
+        #toast_message.show { opacity:1; }
+        p.pd-text label, p.pd-select label, p.pd-textarea label { display:none !important; }
+        form.form p label { color:#6e6b6b; font-size:12pt; font-family:"Open Sans"; }
+        form.form input.text, form.form textarea.standard, form.form select, form.form input.date { background-color:#FFFFFF; border:solid 1px #7D7D7D; font-size:16px; color:#7D7D7D; border-radius:10px; padding:6px 5px; }
+        form.form p label { font-size:12px; color:#333333; font-weight:normal; padding:0 0 3px; }
+        form.form p.submit input { background-color:#eaaa00; border:solid 1px #eaaa00; font-size:14px; color:#000; font-weight:bold; padding:15px 38px !important; border-radius:100px !important; width:230px !important; margin-left:0% !important; }
+        form.form p.submit { margin-top:10px !important; margin-bottom:0 !important; text-align:center !important; margin-left:-35px !important; }
+        form.form p.submit input:hover { background-color:#910048 !important; color:#fff !important; cursor:pointer; }
+        form.form p.required label, form.form span.required label { font-weight:normal; }
+        .title { font-size:22px; font-family:"Open Sans"; font-weight:bold; text-align:center; margin-bottom:-5px; margin-top:-5px; }
+        .formContainer { text-align:center; }
+        .select_Escoge_Programa, .select_Sede, .select_Tipo_Programa { width:100%; max-width:310px; }
+        .Sede { padding-left:15px; }
+        .description { margin-left:-10px !important; font-family:"Open Sans"; font-size:10px; margin-top:-5px; color:#FFFF; }
+        .autorizacion_datos { margin-left:25% !important; font-size:12px !important; }
+        .solicitar_informacion { margin-left:4% !important; font-family:"Open Sans"; }
+        .solicitar_informacion:hover { background-color:#910048 !important; color:white !important; cursor:pointer; }
+        .select { border-radius:0% !important; font-family:"Open Sans"; border:solid 1px #d1cece !important; width:100%; max-width:310px; }
+        form.form input { border-radius:0% !important; font-family:"Open Sans"; width:100% !important; max-width:310px !important; border:solid 1px #d1cece !important; }
+        .input_confirmacion { margin-left:-19% !important; height:15px !important; margin-top:-15px !important; }
+        .inline { margin-left:-275px !important; }
+        .col { margin-top:-5px; }
+        form.form p { line-height:1em !important; }
+        .phone-container { display:flex; flex-direction:column; gap:6px; width:100%; max-width:310px; margin:0 auto; justify-content:center; align-items:center; }
+        @media (max-width:425px) {
+            .input_confirmacion { margin-left:-60% !important; } .autorizacion_datos { margin-left:20% !important; }
+            form.form input { width:100% !important; max-width:100% !important; } .select { width:100% !important; max-width:100% !important; }
+            .inline { margin-left:-192px !important; }
+            form.form p.submit input { padding:18px 30px !important; margin-left:14% !important; }
+        }
+        @media (min-width:426px) and (max-width:520px) {
+            .input_confirmacion { margin-left:-10% !important; } .autorizacion_datos { margin-left:25% !important; }
+            form.form input { width:220px !important; } .select { width:220px !important; }
+            .inline { margin-left:-190px !important; }
+            form.form p.submit input { padding:18px 30px !important; margin-left:14% !important; }
+        }
+        @media (min-width:521px) and (max-width:640px) {
+            .input_confirmacion { margin-left:3% !important; } .autorizacion_datos { margin-left:30% !important; }
+            form.form input { width:272px !important; } .select { width:272px !important; }
+            .inline { margin-left:-271px !important; }
+            form.form p.submit input { padding:18px 30px !important; margin-left:10% !important; }
+        }
+        @media (min-width:641px) and (max-width:760px) {
+            .input_confirmacion { margin-left:12% !important; } .autorizacion_datos { margin-left:35% !important; }
+            form.form input { width:310px !important; } .select { width:310px !important; }
+            .inline { margin-left:-345px !important; }
+            form.form p.submit input { padding:18px 30px !important; margin-left:8% !important; }
+        }
+        @media (min-width:761px) and (max-width:900px) {
+            .input_confirmacion { margin-left:-50% !important; } .autorizacion_datos { margin-left:17% !important; }
+            form.form input { width:280px !important; } .select { width:280px !important; }
+            .inline { margin-left:-250px !important; }
+            form.form p.submit input { padding:18px 30px !important; margin-left:7% !important; }
+        }
+        @media (min-width:901px) and (max-width:1115px) {
+            .input_confirmacion { margin-left:-20% !important; } .autorizacion_datos { margin-left:25% !important; }
+            form.form input { width:290px !important; } .select { width:290px !important; }
+            .inline { margin-left:-260px !important; }
+            form.form p.submit input { padding:18px 30px !important; margin-left:6% !important; }
+        }
+    </style>
+
+    <div class="formContainer">
+        <!-- ============================================================
+             FORM B2B — action y campos ocultos propios de B2B
+             ============================================================ -->
+        <form accept-charset="UTF-8"
+              action="https://go.uide.edu.ec/l/455762/2026-09-04/8d63nc"
+              method="post"
+              class="form"
+              id="pardot-form"
+              target="hidden_iframe"
+              onsubmit="return handleConditionalRedirect(this);">
+
+            <!-- ── Campos ocultos B2B ── -->
+            <input type="hidden" id="utm_source"   name="utm_source"   value="">
+            <input type="hidden" id="utm_medium"   name="utm_medium"   value="">
+            <input type="hidden" id="utm_term"     name="utm_term"     value="">
+            <input type="hidden" id="gclid_h"      name="gclid_h">
+            <input type="hidden" id="gclid_field"  name="gclid_field">
+            <input type="hidden" id="periodo"      name="periodo">
+            <input type="hidden" id="esc_pgm"      name="esc_pgm"      value="">
+            <input name="_utf8"  type="hidden"     value="&#9731;">
+            <input type="hidden" id="hiddenDependentFields" name="hiddenDependentFields" value="">
+            <input type="checkbox" id="u_labora"   name="u_labora"     value="true" checked style="display:none">
+
+            <!-- ── Valores B2B por defecto (se sobreescriben solo si hay UTMs) ── -->
+            <input type="hidden" id="origen"       name="origen"       value="Capacitación empresas">
+            <input type="hidden" id="c_lead"       name="c_lead"       value="Prospeccion">
+            <input type="hidden" id="utm_campaign" name="utm_campaign" value="Campaña general B2B">
+
+            <!-- ── Sede ── -->
+            <div class="col">
+                <p class="form-field Sede pd-select required required-custom form-field-primary">
+                    <label class="field-label" for="sede">Sede:</label>
+                    <select id="sede" name="sede" class="select select_Sede"
+                            onchange="ShowValuesSede();" required>
+                        <option value="" selected>Sede *</option>
+                        <option value="Quito">Quito</option>
+                        <option value="Guayaquil">Guayaquil</option>
+                        <option value="Loja">Loja</option>
+                        <option value="Distancia">Modalidad En Línea</option>
+                    </select><br>
+                </p>
+            </div>
+
+            <!-- ── Tipo de programa ── -->
+            <div class="col">
+                <p class="form-field Tipo_de_programa pd-select required required-custom form-field-primary">
+                    <label class="field-label" for="tp_pgm">Tipo de Programa:</label>
+                    <select id="tp_pgm" name="tp_pgm" class="select select_Tipo_Programa"
+                            onchange="handleTipoProgramaChange(event);" disabled required>
+                        <option value="" selected>Tipo de programa *</option>
+                    </select><br>
+                </p>
+            </div>
+
+            <!-- ── Modalidad (posgrado / online) ── -->
+            <div class="col" id="modalidad_container" style="display:none;">
+                <p class="form-field Modalidad_posgrado pd-select required required-custom form-field-primary">
+                    <label class="field-label" for="modalidad_posgrado">Modalidad:</label>
+                    <select id="modalidad_posgrado" name="modalidad_posgrado"
+                            class="select select_Modalidad_Posgrado"
+                            onchange="handleModalidadChange(event);">
+                        <option value="" selected>Seleccione modalidad *</option>
+                    </select><br>
+                </p>
+            </div>
+
+            <!-- ── Programas (se puebla dinámicamente) ── -->
+            <div hidden id="div_programas"></div>
+
+            <!-- ── Nombres ── -->
+            <div class="col">
+                <p class="form-field first_name pd-text required required-custom">
+                    <label class="field-label" for="f_name">Nombres *</label>
+                    <input type="text" name="f_name" id="f_name" value="" class="text"
+                           size="30" maxlength="40" placeholder="Nombres *"
+                           oninvalid="registrarErrorFormulario('El nombre es obligatorio','f_name');" required>
+                </p>
+            </div>
+
+            <!-- ── Apellidos ── -->
+            <div class="col">
+                <p class="form-field last_name pd-text required required-custom">
+                    <label class="field-label" for="l_name">Apellidos *</label>
+                    <input type="text" name="l_name" id="l_name" value="" class="text"
+                           size="30" maxlength="40" placeholder="Apellidos *"
+                           oninvalid="registrarErrorFormulario('El apellido es obligatorio','l_name');" required>
+                </p>
+            </div>
+
+            <!-- ── Email ── -->
+            <div class="col">
+                <p class="form-field email pd-text required required-custom">
+                    <label class="field-label" for="email">Email *</label>
+                    <input type="email" name="email" id="email" value="" class="text"
+                           size="30" maxlength="40" placeholder="Email *"
+                           pattern="^[^s@]+@[^s@]+.(com|net|org|edu|gob|ec|co|mx|es|ar|cl|pe|bo|uy|py|ve|br|pt|fr|it|de|uk|info|io|biz)$"
+                           title="Ingresa un correo válido con @ y dominio (.com, .net, .org, etc)"
+                           oninvalid="registrarErrorFormulario('El correo es obligatorio','email');" required>
+                </p>
+            </div>
+
+            <!-- ── Teléfono ── -->
+            <div class="col">
+                <p class="form-field mobile pd-text required required-custom">
+                    <label class="field-label" for="mobile">Celular *</label>
+                    <div class="phone-container">
+                        <select id="country_code" name="country_code" class="select"
+                                onchange="validatePhoneByCountry();" required>
+                            <option value="+593" selected>🇪🇨 Ecuador +593</option>
+                            <option value="+1">🇺🇸 USA/Canadá +1</option>
+                            <option value="+57">🇨🇴 Colombia +57</option>
+                            <option value="+51">🇵🇪 Perú +51</option>
+                        </select>
+                        <input type="text" name="mobile" id="mobile" value="" class="text"
+                               size="30" maxlength="15" placeholder="Celular *"
+                               oninput="this.value=this.value.replace(/[^0-9]/g,''); validatePhoneByCountry();"
+                               oninvalid="registrarErrorFormulario(this.validationMessage||'El celular es obligatorio o inválido','mobile');"
+                               required>
+                    </div>
+                </p>
+            </div>
+
+            <!-- ── Cédula (B2B) ── -->
+            <div class="col">
+                <p class="form-field company pd-text required required-custom">
+                    <label class="field-label" for="cedula">Cédula *</label>
+                    <input type="text" name="cedula" id="cedula" value="" class="text"
+                           size="30" maxlength="10" placeholder="Cédula *"
+                           oninput="enforceCedulaDigits();" required>
+                </p>
+            </div>
+
+            <!-- ── Empresa (B2B) ── -->
+            <div class="col">
+                <p class="form-field company pd-text required required-custom">
+                    <label class="field-label" for="empresa">Empresa *</label>
+            <input type="hidden" name="empresa" id="empresa" value="2646">
+                </p>
+            </div>
+
+            <!-- ── Autorización ── -->
+            <div class="col">
+                <p class="form-field Autorizaci_n_de_datos pd-checkbox required required-custom">
+                    <label class="field-label autorizacion_datos" for="aut_data">Autorización de datos</label>
+                    <span class="value">
+                        <input type="checkbox" name="aut_data" id="aut_data" value="true"
+                               checked class="input_confirmacion"
+                               oninvalid="registrarErrorFormulario('Debe aceptar la política de privacidad','aut_data');"
+                               required>
+                        <label class="inline" for="aut_data">Sí</label>
+                    </span>
+                    <span class="description">*Autorizo a la Universidad Internacional del Ecuador (UIDE) a verificar
+                        la autenticidad de la información proporcionada y utilizarla para fines académicos,
+                        administrativos y con terceros. Entiendo que mis datos serán tratados conforme a la Política de
+                        <a href="https://www.uide.edu.ec/politica-de-privacidad/" target="_blank"
+                           rel="noopener noreferrer">Privacidad de la UIDE</a> y que tengo derecho a solicitar acceso,
+                        rectificación o eliminación de mis datos en cualquier momento, escribiendo al correo:
+                        <a href="mailto:protecciondatospersonales@uide.edu.ec">protecciondatospersonales@uide.edu.ec</a>
+                    </span>
+                </p>
+            </div>
+
+            <!-- ── GCLID hidden ── -->
+            <div class="col">
+                <p class="form-field GCLID pd-hidden hidden">
+                    <input type="hidden" name="gclid_h" id="gclid_h2">
+                </p>
+            </div>
+
+            <!-- Anti-spam honeypot Pardot -->
+            <p style="position:absolute;width:190px;left:-9999px;top:-9999px;visibility:hidden;">
+                <label for="pi_extra_field">Comments</label>
+                <input type="text" name="pi_extra_field" id="pi_extra_field">
+            </p>
+
+            <!-- ── Submit ── -->
+            <p class="submit">
+                <input type="submit" accesskey="s" value="Solicitar información" class="solicitar_informacion">
+            </p>
+
+            <input type="hidden" name="hiddenDependentFields" id="hiddenDependentFields2" value="">
+
+            <!-- ── Programas ocultos (pool) ── -->
+            <div hidden id="div_programas_2">
+                <!-- Pregrado Quito -->
+                <select name="pregrado_quito" id="pregrado_quito" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="1">Administración de Empresas</option>
+                    <option value="16">Arquitectura</option>
+                    <option value="500">Comunicación y Medios Digitales</option>
+                    <option value="18">Derecho</option>
+                    <option value="507">Ciencias Politicas y Relaciones Internacionales</option>
+                    <option value="24">Gastronomía</option>
+                    <option value="324">Diseño Gráfico</option>
+                    <option value="341">Enfermería</option>
+                    <option value="528">Enfermería Internacional</option>
+                    <option value="325">Fisioterapia</option>
+                    <option value="8">Ingeniería Automotriz</option>
+                    <option value="292">Ingeniería Civil</option>
+                    <option value="318">Ingeniería en Sistemas</option>
+                    <option value="257">Ingeniería Industrial</option>
+                    <option value="64">Ingeniería Mecatrónica</option>
+                    <option value="5">Negocios Internacionales</option>
+                    <option value="71">Nutrición</option>
+                    <option value="52">Medicina</option>
+                    <option value="463">Multimedia y Producción AudioVisual</option>
+                    <option value="293">Medicina Veterinaria</option>
+                    <option value="53">Odontología</option>
+                    <option value="520">Psicología Clínica</option>
+                    <option value="412">Finanzas y Negocios Digitales</option>
+                    <option value="2">Marketing</option>
+                </select>
+                <!-- Posgrado Quito Semipresencial -->
+                <select name="posgrado_quito" id="posgrado_quito" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="343">Maestría en Gastronomía con mención en Gestión e Innovación</option>
+                </select>
+                <!-- Posgrado Quito Híbrida -->
+                <select name="posgrado_quito_hibrida" id="posgrado_quito_hibrida" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="421">Maestría en Diseño de Interiores</option>
+                    <option value="502">Maestría en Bienestar Animal</option>
+                    <option value="501">Maestría en Producción Animal</option>
+                </select>
+                <!-- Pregrado Guayaquil -->
+                <select name="pregrado_guayaquil" id="pregrado_guayaquil" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="473">Administración de Empresas</option>
+                    <option value="525">Comercio exterior y aduanas</option>
+                    <option value="283">Derecho</option>
+                    <option value="413">Finanzas y Negocios Digitales</option>
+                    <option value="95">Ingeniería Automotriz</option>
+                    <option value="478">Ingeniería Industrial</option>
+                    <option value="320">Ingeniería en Sistemas</option>
+                    <option value="108">Marketing</option>
+                    <option value="107">Negocios Internacionales</option>
+                    <option value="526">Psicología</option>
+                    <option value="548">Enfermería Internacional</option>
+                </select>
+                <!-- Posgrado Guayaquil (vacío) -->
+                <select name="posgrado_guayaquil" id="posgrado_guayaquil" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                </select>
+                <!-- Pregrado Loja -->
+                <select name="pregrado_loja" id="pregrado_loja" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="79">Administración de Empresas</option>
+                    <option value="93">Arquitectura</option>
+                    <option value="81">Derecho-L</option>
+                    <option value="321">Ingeniería en Tecnologias de la Informacion y la Comunicacion</option>
+                    <option value="86">Marketing</option>
+                    <option value="87">Negocios Internacionales</option>
+                    <option value="522">Psicologia Clínica</option>
+                </select>
+                <!-- Posgrado Loja (vacío) -->
+                <select name="posgrado_loja" id="posgrado_loja" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                </select>
+                <!-- Pregrado Online -->
+                <select name="pregrado_online" id="pregrado_online" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="410">Administración de Empresas</option>
+                    <option value="499">Comunicación y Medios Digitales</option>
+                    <option value="100">Contabilidad y Auditoría-Contador Autorizado</option>
+                    <option value="535">Comercio exterior y aduanas</option>
+                    <option value="260">Derecho</option>
+                    <option value="461">Finanzas</option>
+                    <option value="521">Gastronomía</option>
+                    <option value="481">Ingeniería en Ciberseguridad</option>
+                    <option value="317">Ingeniería en Sistemas de Información</option>
+                    <option value="479">Ingeniería en Software</option>
+                    <option value="537">Inteligencia Artificial</option>
+                    <option value="462">Marketing</option>
+                    <option value="457">Multimedia y producción audiovisual</option>
+                    <option value="96">Negocios Internacionales</option>
+                    <option value="315">Psicología Organizacional</option>
+                    <option value="532">Seguridad y Salud Ocupacional</option>
+                    <option value="531">Telecomunicaciones</option>
+                    <option value="482">Trabajo Social</option>
+                    <option value="480">Administración Pública</option>
+                    <option value="547">Ingeniería en Ciencia de Datos</option>
+                </select>
+                <!-- Programa Ejecutivo Online -->
+                <select name="programa_ejecutivo_online" id="programa_ejecutivo_online" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="189">Programa de Validación Administración de Empresas</option>
+                    <option value="190">Programa de Validación Comunicación</option>
+                    <option value="186">Programa de Validación Contabilidad y Auditoria</option>
+                    <option value="411">Programa de Validación Derecho</option>
+                    <option value="197">Programa de Validación Marketing</option>
+                    <option value="446">Programa de Validación Riesgos y Desastres</option>
+                    <option value="523">Programa de Validación Gastronomía</option>
+                    <option value="536">Programa de Validación Telecomunicaciones</option>
+                    <option value="538">Programa de Validación en Logística y Transporte</option>
+<option value="553">Programa de Validación en Psicología Organizacional</option>
+                </select>
+                <!-- Posgrado Online -->
+                <select name="posgrado_online" id="posgrado_online" onchange="capturar_programa(event)" class="select select_Escoge_Programa">
+                    <option value="">Escoge tu programa</option>
+                    <option value="187">Maestría en cadenas de suministro supply chain</option>
+                    <option value="225">Maestría en Criminalística</option>
+                    <option value="267">Maestría En Gerencia De Salud</option>
+                    <option value="268">Maestría En Salud Pública</option>
+                    <option value="228">Maestría en Gestión de Riesgos</option>
+                    <option value="230">Maestría en Ciberseguridad</option>
+                    <option value="516">Maestría En Inteligencia Artificial Aplicada-Online-PG</option>
+                    <option value="503">Maestría en Ingeniería Automotriz</option>
+                    <option value="235">Maestría en Gestión del Transporte con mención en Tráfico, Movilidad y Seguridad Víal</option>
+                    <option value="477">Maestría en Seguridad y Salud Ocupacional</option>
+                    <option value="266">Maestría en Energías Renovables</option>
+                    <option value="424">Maestría En Desarrollo Sostenible y Responsabilidad Social Organizacional</option>
+                    <option value="544">Maestría en Educación Tecnología e Innovación</option>
+                    <option value="524">Maestría en Protección de datos</option>
+                    <option value="511">Maestría en Derecho laboral y seguridad social</option>
+                    <option value="277">Maestría en Derecho Procesal Penal y Litigación Oral</option>
+                    <option value="515">Maestría En Dirección Publicitaria Y Creativa-Online-PG</option>
+                    <option value="265">Maestría en marketing y comunicación</option>
+                    <option value="246">Maestría en Gestión de Proyectos</option>
+                    <option value="258">Maestría en Marketing, Mención Estrategia Digital</option>
+                    <option value="422">Maestría En Inteligencia de Negocios y Comportamiento del Consumidor</option>
+                    <option value="396">Maestría En Neuromarketing</option>
+                    <option value="282">Maestría en Nutrición y Dietética con mención en Enfermedades Metabólicas, Obesidad y Diabetes</option>
+                    <option value="514">Maestría En Gestión Pública</option>
+                    <option value="216">Maestría En Administración de empresas MBA</option>
+                    <option value="261">Maestría en Gerencia del Talento Humano</option>
+                    <option value="294">Maestría en Gestión Integral de seguros</option>
+                    <option value="345">Maestría en Finanzas Corporativas</option>
+                    <option value="347">Maestría en Dirección Financiera con mención en mercados Internacionales</option>
+                    <option value="278">Maestría en Gestión Deportiva</option>
+                    <option value="510">Maestría en Planificación y Diseño Urbano con Mención en ciudades inteligentes</option>
+                    <option value="541">Maestría en Gestión de la Seguridad Privada</option>
+                    <option value="542">Maestría en Gestión Educativa</option>
+                    <option value="554">Maestría en Derecho de Empresa</option>
+                    <option value="555">Maestría en Contabilidad y Auditoría</option>
+                </select>
+            </div>
+
+            <!-- esc_pgm oculto (recibe el value del programa seleccionado) -->
+            <select id="esc_pgm" name="esc_pgm" class="select select_Escoge_Programa" hidden>
+                <option value="" id="opcion_programa"></option>
+            </select>
+
+            <script type="text/javascript">
+                // Forzar target="_top" en links internos
+                var anchors = document.getElementsByTagName("a");
+                for (var i = 0; i < anchors.length; i++) {
+                    if (anchors[i].getAttribute("href") && !anchors[i].getAttribute("target")) {
+                        anchors[i].target = "_top";
+                    }
+                }
+            </script>
+        </form>
+    </div>
+
+    <script type="text/javascript" src="https://go.uide.edu.ec/js/piUtils.js?ver=2021-09-20"></script>
+</body>
+</html>

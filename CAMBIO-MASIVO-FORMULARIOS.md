@@ -204,6 +204,18 @@ mysql --defaults-extra-file=/home/toor/.uide.cnf bitn_uide < backup_AAAAMMDD_HHM
 | 2026-07-14 | Distancia→Quito | Forzar sede="Quito" en submit para posgrados desde Distancia (mismo patrón Loja/Guayaquil) | 21 |
 | 2026-07-14 | ShowValuesSede | Normalizado `Posgrado Online` → `Posgrado En Línea` para Distancia (consistente con Loja/Guayaquil) | 11 |
 | 2026-07-14 | Limpieza duplicado | Eliminado `sf.value = "Quito"` duplicado en handleConditionalRedirect | 11 |
+| 2026-09-04 | B2B CEDMT | Duplicado `Formb2b_act_2026_2646.html` (action `8d63nc`, empresa fija hidden `2646`, campaña `Campaña general B2B` fija); iframe de `registro-empresas-cedmt` (post 228864) apuntado al duplicado. Ver `logs/20260904-formb2b-cedmt-2646.md` | 1 |
+
+### 6.2 B2B — Duplicado con empresa fija (2026-09-04)
+
+Para el convenio CEDMT se duplicó el form B2B original (`Formb2b_act_2026.html`) a `Formb2b_act_2026_2646.html` sin tocar el original:
+
+1. **Endpoint nuevo:** `action="https://go.uide.edu.ec/l/455762/2026-09-04/8d63nc"` (antes `2026-02-12/8d3jk1`).
+2. **Código de empresa fijo:** el `<select name="empresa">` (95 opciones Salesforce + "Otra") se reemplazó por `<input type="hidden" name="empresa" value="2646">`, eliminando `handleEmpresaChange()` y `o_empresa_container`.
+3. **Campaña fija:** `utm_campaign` se fuerza a `Campaña general B2B` al final de `updateUtmTracking()` (no se sobreescribe con UTM). Origen/c_lead siguen la lógica UTM original.
+4. **Página:** se apuntó el iframe en `_elementor_data` del post 228864 con PHP `str_replace` (1 reemplazo, `JSON_VALID=1`).
+
+Verificación: ambos archivos HTTP 200, iframe único del duplicado en producción, campo `empresa=2646`, campaña `Campaña general B2B`, 35 campos de envío. El tracking `piCId='211309'` se conservó del original.
 
 ### 6.1 Lecciones aprendidas de esta sesión
 
