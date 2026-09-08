@@ -88,7 +88,7 @@ Actual: `2026-2A Online Pregrado` → Nuevo: `2026-2 Online Pregrado`
 
 | ID | Post name | Sede/Distancia |
 |---|---|---|
-| 149312 | administracion-de-empresas-online | 410 |
+| 149312 | administracion-de-empresas-online | 559 |
 | 178866 | carrera-de-administracion-publica-en-linea | 480 |
 | 178951 | carerra-de-seguridad-y-salud-ocupacional-en-linea | 532 |
 | 181353 | comercio-exterior-y-aduanas-en-linea | 535 |
@@ -101,7 +101,7 @@ Actual: `2026-2A Online Pregrado` → Nuevo: `2026-2 Online Pregrado`
 | 151969 | ingenieria-en-sistemas-de-la-informacion-en-linea | 317 |
 | 151686 | ingenieria-en-software | 479 |
 | 177993 | ingenieria-en-telecomunicaciones | 531 |
-| 152192 | marketing-en-linea | 462 |
+| 152192 | marketing-en-linea | 556 |
 | 152213 | negocios-internacionales-en-linea | 96 |
 | 152262 | multimedia-y-produccion-audiovisual-en-linea | 457 |
 | 151912 | psicologia-en-linea | 519 |

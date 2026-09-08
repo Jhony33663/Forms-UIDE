@@ -204,6 +204,8 @@ mysql --defaults-extra-file=/home/toor/.uide.cnf bitn_uide < backup_AAAAMMDD_HHM
 | 2026-07-14 | Distancia→Quito | Forzar sede="Quito" en submit para posgrados desde Distancia (mismo patrón Loja/Guayaquil) | 21 |
 | 2026-07-14 | ShowValuesSede | Normalizado `Posgrado Online` → `Posgrado En Línea` para Distancia (consistente con Loja/Guayaquil) | 11 |
 | 2026-07-14 | Limpieza duplicado | Eliminado `sf.value = "Quito"` duplicado en handleConditionalRedirect | 11 |
+| 2026-09-08 | Códigos PVC/Online | Reemplazo `410→559` (Administración de Empresas) y `462→556` (Marketing) como carreras **online normales** (`-ONLINE-UG`, sin PVC) en `<option>`; agregado nuevo `564` (Ingeniería Automotriz) con label "Validación de conocimientos en Ingeniería Automotriz (Presencial Guayaquil)" como único **PVC** (`GYEPVC-UG`), visible solo en sede Guayaquil | 35 |
+| 2026-09-08 | Labels normales | Labels 559/556 corregidos de "Programa de Validación …" a nombre normal ("Administración de Empresas" / "Marketing"); solo 564 conserva texto de validación | 32 |
 | 2026-09-04 | B2B CEDMT | Duplicado `Formb2b_act_2026_2646.html` (action `8d63nc`, empresa fija hidden `2646`, campaña `Campaña general B2B` fija); iframe de `registro-empresas-cedmt` (post 228864) apuntado al duplicado. Ver `logs/20260904-formb2b-cedmt-2646.md` | 1 |
 
 ### 6.2 B2B — Duplicado con empresa fija (2026-09-04)
